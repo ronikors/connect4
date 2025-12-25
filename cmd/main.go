@@ -26,6 +26,8 @@ func main() {
 		fmt.Println(ctrl.GetUserField())
 	}
 
+	// TODO
+
 	//if ctrl.IsGameOver() {
 	//fmt.Println("объявление победителя")
 	//break
