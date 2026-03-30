@@ -1,0 +1,1796 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wortschatz C1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#fafaf8; --bg2:#f4f3ef; --bg3:#eeecea;
+  --sur:#ffffff; --sur2:#f9f9f7;
+  --bdr:#e0deda; --bdr2:#cbc9c4; --bdr3:#a8a5a0;
+  --grn:#2d7a4f; --grn2:#246640; --grn3:#3a9d64; --grnbg:rgba(45,122,79,.07);
+  --amb:#b45309; --amb2:#d97706;
+  --ok:#16a34a; --err:#dc2626; --err2:#b91c1c;
+  --t1:#1c1917; --t2:#57534e; --t3:#a8a29e;
+  --r:10px; --r2:6px;
+  --sh:0 1px 4px rgba(0,0,0,.06),0 4px 14px rgba(0,0,0,.06);
+  --sh2:0 4px 20px rgba(0,0,0,.12);
+  --sb:252px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;line-height:1.6;display:flex;flex-direction:column}
+/* TOPBAR */
+.tb{position:fixed;top:0;left:0;right:0;z-index:300;height:52px;background:rgba(250,250,248,.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--bdr);box-shadow:0 1px 8px rgba(0,0,0,.06);display:flex;align-items:center;padding:0 16px;gap:12px}
+.mb{width:34px;height:34px;border-radius:var(--r2);border:1px solid var(--bdr2);background:transparent;color:var(--t2);font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.mb:hover{border-color:var(--grn);color:var(--grn);background:var(--grnbg)}
+.logo{font-family:'Lora',serif;font-size:1.05rem;color:var(--t1);letter-spacing:-.01em;white-space:nowrap;flex-shrink:0}
+.logo em{font-style:italic;color:var(--grn)}
+.hstats{display:flex;gap:18px;margin-left:auto;flex-wrap:wrap}
+.hs{display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(--t2);font-weight:500}
+.hsv{font-family:'DM Mono',monospace;color:var(--t1);font-weight:600;font-size:.77rem}
+.hd{width:5px;height:5px;border-radius:50%;background:var(--grn);flex-shrink:0}
+.hd.r{background:var(--err)}.hd.o{background:var(--amb2)}
+/* LAYOUT */
+.layout{display:flex;padding-top:52px;min-height:100vh}
+/* SIDEBAR */
+.sb{width:var(--sb);flex-shrink:0;position:fixed;top:52px;left:0;bottom:0;background:var(--sur);border-right:1px solid var(--bdr);display:flex;flex-direction:column;transition:transform .25s cubic-bezier(.4,0,.2,1);z-index:200}
+.sb.col{transform:translateX(calc(-1 * var(--sb)))}
+.sbo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:199}
+.sbo.show{display:block}
+.sbh{padding:14px 16px 8px;font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);border-bottom:1px solid var(--bdr)}
+.tlist{flex:1;overflow-y:auto;padding:6px;scrollbar-width:thin;scrollbar-color:var(--bdr2) transparent}
+.tlist::-webkit-scrollbar{width:3px}
+.tlist::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:2px}
+.tr{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--r);cursor:pointer;transition:all .14s;border:1px solid transparent;margin-bottom:1px}
+.tr:hover{background:var(--bg2)}
+.tr.act{background:var(--grnbg);border-color:rgba(45,122,79,.2)}
+.ti{width:30px;height:30px;border-radius:8px;background:var(--bg2);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.tr.act .ti{background:var(--grnbg);border-color:rgba(45,122,79,.3)}
+.tm{flex:1;min-width:0}
+.tn{font-size:.81rem;font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tr.act .tn{color:var(--grn2)}
+.tsub{font-size:.64rem;color:var(--t3);font-family:'DM Mono',monospace;margin-top:1px}
+.tpb{height:2px;background:var(--bdr);border-radius:1px;margin-top:4px;overflow:hidden}
+.tpf{height:100%;background:var(--grn3);border-radius:1px;transition:width .5s}
+.tdel{width:20px;height:20px;border-radius:50%;border:none;background:transparent;color:var(--t3);cursor:pointer;display:none;align-items:center;justify-content:center;font-size:.7rem;transition:all .14s;flex-shrink:0}
+.tr:hover .tdel{display:flex}
+.tdel:hover{color:var(--err);background:rgba(220,38,38,.07)}
+.sbf{padding:8px 6px;border-top:1px solid var(--bdr)}
+.atbtn{display:flex;align-items:center;gap:7px;width:100%;padding:8px 12px;border-radius:var(--r);border:1px dashed var(--bdr2);background:transparent;color:var(--t2);font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s}
+.atbtn:hover{border-color:var(--grn);color:var(--grn);background:var(--grnbg)}
+/* CONTENT */
+.cnt{flex:1;margin-left:var(--sb);transition:margin-left .25s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;min-width:0}
+.cnt.gone{margin-left:0}
+.vnav{position:sticky;top:52px;z-index:100;background:rgba(250,250,248,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--bdr);display:flex;gap:2px;padding:6px 20px;overflow-x:auto;scrollbar-width:none}
+.vnav::-webkit-scrollbar{display:none}
+.vb{padding:5px 14px;border-radius:100px;border:1px solid transparent;background:transparent;color:var(--t2);font-family:'Nunito',sans-serif;font-size:.77rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .14s}
+.vb:hover{color:var(--t1);background:var(--bg2);border-color:var(--bdr)}
+.vb.act{background:var(--grn);color:#fff;border-color:var(--grn)}
+.vsep{width:1px;height:16px;background:var(--bdr);align-self:center;margin:0 3px}
+.main{max-width:1080px;padding:22px 20px 80px;position:relative;z-index:1}
+/* SECTION LABEL */
+.sl{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:9px;display:flex;align-items:center;gap:9px}
+.sl::after{content:'';flex:1;height:1px;background:var(--bdr)}
+/* PACK GRID */
+.pgrid{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:18px}
+.pc{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 8px;border-radius:100px;border:1px solid var(--bdr);background:var(--sur);cursor:pointer;transition:all .14s;white-space:nowrap}.pc:hover{border-color:var(--bdr2);background:var(--bg2)}.pc.sel{border-color:var(--grn);background:var(--grnbg)}.pcn{font-size:.75rem;font-weight:700;color:var(--t2)}.pc.sel .pcn{color:var(--grn2)}.pcs{display:none}.pc-ct{font-size:.63rem;color:var(--t3);font-family:"DM Mono",monospace}.pcb{width:24px;height:3px;background:rgba(0,0,0,.1);border-radius:2px;overflow:hidden;flex-shrink:0}.pcf{height:100%;background:var(--grn3);border-radius:2px;transition:width .5s}
+/* WORD CARDS */
+.wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:10px}
+.wc{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:14px 16px;transition:border-color .15s;box-shadow:var(--sh);position:relative}
+.wc:hover{border-color:var(--bdr2)}
+.wc.lrn{border-color:rgba(45,122,79,.4)}
+.wc.lrn::before{content:'\2713';position:absolute;top:9px;right:11px;color:var(--grn);font-size:.74rem;font-weight:700}
+.wde{font-family:'Lora',serif;font-size:.98rem;color:var(--t1);line-height:1.3;padding-right:18px;margin-bottom:1px}
+.wfm{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--t3);margin-bottom:4px}
+.wru{font-size:.79rem;color:var(--amb);font-weight:600;margin-bottom:5px}
+.wia{margin-bottom:7px}
+.wthumb{width:100%;max-height:280px;height:auto;object-fit:contain;background:var(--bg2);border-radius:var(--r2);border:1px solid var(--bdr);display:block;cursor:pointer;transition:opacity .15s}
+.wthumb:hover{opacity:.88}
+.wir{display:flex;gap:4px;margin-top:4px}
+.pill{padding:2px 8px;border-radius:100px;border:1px solid var(--bdr);background:transparent;color:var(--t3);font-size:.63rem;font-weight:600;cursor:pointer;transition:all .14s;font-family:'Nunito',sans-serif;display:inline-flex;align-items:center;gap:3px}
+.pill:hover{border-color:var(--grn);color:var(--grn);background:var(--grnbg)}
+.pill.del:hover{border-color:var(--err);color:var(--err);background:rgba(220,38,38,.05)}
+.wed{font-size:.73rem;color:var(--t2);font-style:italic;margin-bottom:2px;line-height:1.5}
+.wer{font-size:.71rem;color:var(--t3);line-height:1.5;margin-bottom:8px}
+.wft{display:flex;gap:5px;align-items:flex-start}
+.wnote{flex:1;background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r2);padding:4px 8px;color:var(--t1);font-family:'Nunito',sans-serif;font-size:.71rem;resize:none;min-height:28px;height:28px;overflow:hidden;outline:none;transition:border-color .14s}
+.wnote:focus{border-color:var(--grn3)}.wnote::placeholder{color:var(--t3)}
+.wlb{padding:4px 10px;border-radius:var(--r2);border:1px solid var(--bdr);background:transparent;color:var(--t3);font-size:.68rem;font-weight:600;cursor:pointer;transition:all .14s;white-space:nowrap;font-family:'Nunito',sans-serif;flex-shrink:0}
+.wlb:hover{border-color:var(--ok);color:var(--ok)}
+.wlb.on{background:rgba(22,163,74,.08);border-color:var(--ok);color:var(--ok)}
+/* OVERLAYS */
+.ovl{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)}
+.ovl.open{display:flex}
+.mbox{background:var(--sur);border:1px solid var(--bdr2);border-radius:14px;width:100%;max-width:420px;box-shadow:var(--sh2);overflow:hidden}
+.mhdr{padding:14px 18px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:10px}
+.mttl{font-family:'Lora',serif;font-size:1rem;color:var(--t1);flex:1}
+.mxbtn{width:28px;height:28px;border-radius:50%;border:1px solid var(--bdr);background:transparent;color:var(--t2);cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:all .14s}
+.mxbtn:hover{background:var(--bg2);color:var(--t1)}
+.mbdy{padding:18px}
+.mft{padding:12px 18px;border-top:1px solid var(--bdr);display:flex;gap:8px;justify-content:flex-end}
+.dz{width:100%;border:1.5px dashed var(--bdr2);border-radius:var(--r);padding:26px 20px;text-align:center;cursor:pointer;transition:all .17s;background:var(--bg2);display:block}
+label.dz:hover,.dz.drag{border-color:var(--grn);background:var(--grnbg)}
+.dzi{font-size:2rem;display:block;margin-bottom:8px}.dzt{font-size:.83rem;font-weight:600;color:var(--t1)}.dzs{font-size:.71rem;color:var(--t3);margin-top:3px}
+.ipw{margin-top:14px;display:none}.ipw.show{display:block}
+.ipv{width:100%;max-height:180px;object-fit:contain;border-radius:var(--r2);border:1px solid var(--bdr)}
+/* ADD TOPIC */
+.atbox{background:var(--sur);border:1px solid var(--bdr2);border-radius:14px;width:100%;max-width:500px;box-shadow:var(--sh2);overflow:hidden}
+.attl{font-family:'Lora',serif;font-size:1.1rem;color:var(--t1);padding:18px 20px 0}
+.atbd{padding:12px 20px}
+.atlb{display:block;font-size:.71rem;font-weight:700;color:var(--t2);margin-bottom:4px;margin-top:12px;letter-spacing:.03em}
+.atlb:first-child{margin-top:0}
+.atip{width:100%;background:var(--bg2);border:1px solid var(--bdr2);border-radius:var(--r2);padding:8px 12px;color:var(--t1);font-family:'Nunito',sans-serif;font-size:.86rem;outline:none;transition:border-color .14s}
+.atip:focus{border-color:var(--grn3)}
+.erow{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.eb{width:32px;height:32px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .14s}
+.eb:hover{border-color:var(--bdr2)}.eb.sel{border-color:var(--grn);background:var(--grnbg)}
+.fdz{border:1.5px dashed var(--bdr2);border-radius:var(--r);padding:14px;text-align:center;cursor:pointer;transition:all .17s;background:var(--bg2);margin-top:5px}
+.fdz:hover,.fdz.drag{border-color:var(--grn);background:var(--grnbg)}
+.fdi{font-size:1.5rem}.fdt{font-size:.79rem;font-weight:600;color:var(--t1);margin-top:3px}.fds{font-size:.68rem;color:var(--t3);margin-top:2px}
+.fst{font-size:.73rem;margin-top:7px;padding:7px 10px;border-radius:var(--r2);display:none}
+.fst.ok{display:block;background:rgba(22,163,74,.07);color:var(--ok);border:1px solid rgba(22,163,74,.2)}
+.fst.err{display:block;background:rgba(220,38,38,.06);color:var(--err);border:1px solid rgba(220,38,38,.15)}
+.atft{padding:12px 20px;border-top:1px solid var(--bdr);display:flex;gap:8px;justify-content:flex-end}
+.phinт{font-size:.67rem;color:var(--t3);margin-top:8px;line-height:1.6;padding:8px 10px;background:var(--bg3);border-radius:var(--r2)}
+.phinт code{background:var(--bdr);padding:1px 5px;border-radius:3px;font-size:.65rem;color:var(--grn2);font-family:'DM Mono',monospace}
+/* BUTTONS */
+.bp{padding:8px 20px;border-radius:var(--r);border:none;background:var(--grn);color:#fff;font-family:'Nunito',sans-serif;font-size:.84rem;font-weight:700;cursor:pointer;transition:all .15s;box-shadow:0 2px 8px rgba(45,122,79,.25)}
+.bp:hover{background:var(--grn2);transform:translateY(-1px)}.bp:disabled{opacity:.4;cursor:default;transform:none}
+.bs{padding:8px 16px;border-radius:var(--r);border:1px solid var(--bdr2);background:transparent;color:var(--t2);font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .14s}
+.bs:hover{color:var(--t1);border-color:var(--bdr3);background:var(--bg2)}
+/* EXERCISE */
+.exc{max-width:620px;margin:0 auto}
+.exh{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.xpb{flex:1;height:3px;background:var(--bdr);border-radius:2px;overflow:hidden}
+.xpf{height:100%;background:linear-gradient(90deg,var(--grn),var(--grn3));border-radius:2px;transition:width .4s}
+.xcnt{font-family:'DM Mono',monospace;font-size:.74rem;color:var(--t3);white-space:nowrap}
+.xcard{background:var(--sur);border:1px solid var(--bdr);border-radius:14px;padding:26px 28px;margin-bottom:12px;min-height:210px;display:flex;flex-direction:column;justify-content:center;box-shadow:var(--sh)}
+.xbdg{display:inline-block;padding:2px 8px;border-radius:100px;background:var(--grnbg);border:1px solid rgba(45,122,79,.2);color:var(--grn2);font-size:.61rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+.xq{font-family:'Lora',serif;font-size:1.35rem;color:var(--t1);line-height:1.4;margin-bottom:4px}
+.xhint{font-size:.72rem;color:var(--t3);margin-bottom:14px;font-style:italic;font-family:'DM Mono',monospace}
+.xsub{font-size:.81rem;color:var(--t2);margin-bottom:13px;line-height:1.6}
+.xsub strong{color:var(--amb);font-weight:600}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.opt{padding:10px 13px;border-radius:var(--r);border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-family:'Nunito',sans-serif;font-size:.79rem;font-weight:500;cursor:pointer;text-align:left;transition:all .13s;line-height:1.4}
+.opt:hover:not(:disabled){border-color:var(--bdr2);background:var(--bg3)}
+.opt.ok{border-color:var(--ok);background:rgba(22,163,74,.07);color:var(--ok);font-weight:600}
+.opt.no{border-color:var(--err);background:rgba(220,38,38,.05);color:var(--err2)}
+.xinp{width:100%;background:var(--bg2);border:1px solid var(--bdr2);border-radius:var(--r);padding:10px 13px;color:var(--t1);font-family:'Nunito',sans-serif;font-size:.93rem;outline:none;transition:all .15s;margin-bottom:7px}
+.xinp:focus{border-color:var(--grn3);box-shadow:0 0 0 3px rgba(45,122,79,.1)}
+.xinp.ok{border-color:var(--ok);background:rgba(22,163,74,.05)}.xinp.no{border-color:var(--err);background:rgba(220,38,38,.04)}
+.xfb{min-height:36px;padding:8px 12px;border-radius:var(--r2);font-size:.8rem;font-weight:600;display:none;margin-bottom:7px}
+.xfb.show{display:block}.xfb.ok{background:rgba(22,163,74,.07);color:var(--ok);border:1px solid rgba(22,163,74,.2)}.xfb.no{background:rgba(220,38,38,.06);color:var(--err);border:1px solid rgba(220,38,38,.15)}
+.xacts{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(198px,1fr));gap:9px;margin-bottom:18px}
+.mc{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:16px;cursor:pointer;transition:all .16s;box-shadow:var(--sh)}
+.mc:hover{border-color:var(--bdr2);transform:translateY(-1px)}.mc.sel{border-color:rgba(45,122,79,.5);background:var(--grnbg)}
+.mci{font-size:1.5rem;display:block;margin-bottom:6px}.mcn{font-weight:700;font-size:.83rem;margin-bottom:3px;color:var(--t1)}.mcd{font-size:.71rem;color:var(--t2);line-height:1.5}
+.trow{display:flex;align-items:center;gap:11px;flex-wrap:wrap}
+.tog{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;font-size:.78rem;color:var(--t2)}
+.tog input{display:none}
+.ttr{width:30px;height:16px;background:var(--bdr2);border-radius:8px;position:relative;transition:background .15s}
+.tog input:checked + .ttr{background:var(--grn3)}
+.tth{position:absolute;top:2px;left:2px;width:12px;height:12px;background:#fff;border-radius:50%;transition:left .15s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tog input:checked ~ .ttr .tth{left:16px}
+/* FINISH */
+.fin{background:var(--sur);border:1px solid var(--bdr);border-radius:14px;padding:34px 26px;text-align:center;max-width:400px;margin:26px auto;box-shadow:var(--sh)}
+.ftl{font-family:'Lora',serif;font-size:1.7rem;color:var(--t1);margin-bottom:4px}
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}
+.fst2{background:var(--bg2);border-radius:var(--r);padding:11px;border:1px solid var(--bdr)}
+.fv{font-family:'Lora',serif;font-size:1.65rem;display:block}
+.fv.g{color:var(--ok)}.fv.r{color:var(--err)}.fv.o{color:var(--amb2)}
+.fl{font-size:.64rem;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+/* STATS */
+.stit{font-family:'Lora',serif;font-size:1.08rem;color:var(--t1);margin-bottom:10px;margin-top:22px}
+.stit:first-child{margin-top:0}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:7px;margin-bottom:18px}
+.sc{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:14px;text-align:center;box-shadow:var(--sh)}
+.sv{font-family:'Lora',serif;font-size:1.85rem;display:block;color:var(--t1)}
+.slb{font-size:.64rem;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.hwl{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:6px}
+.hwi{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r2);padding:9px 12px;display:flex;align-items:center;gap:9px;box-shadow:var(--sh)}
+.hwb{min-width:28px;height:28px;border-radius:50%;background:rgba(220,38,38,.07);border:1px solid rgba(220,38,38,.15);color:var(--err);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.68rem;font-weight:700}
+.hwde{font-size:.79rem;font-weight:600;color:var(--t1)}.hwru{font-size:.69rem;color:var(--t3)}
+.ppl{display:grid;gap:6px}
+.ppi{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r2);padding:10px 13px}
+.ppih{display:flex;justify-content:space-between;margin-bottom:5px}
+.ppn{font-weight:600;font-size:.79rem;color:var(--t1)}.ppp{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--t3)}
+.ppb{height:3px;background:var(--bdr);border-radius:2px;overflow:hidden}
+.ppf{height:100%;background:var(--grn3);border-radius:2px;transition:width .6s}
+.view{display:none}.view.act{display:block}
+.xkeybtn{background:none;border:1px solid var(--bdr2);border-radius:4px;color:var(--t3);font-size:.7rem;cursor:pointer;padding:1px 5px;margin-left:7px;vertical-align:middle;transition:all .14s}
+.xkeybtn:hover{color:var(--grn);border-color:var(--grn)}
+.all-tbl{width:100%;border-collapse:collapse;font-size:.78rem;margin-bottom:20px}
+.all-tbl th{text-align:left;padding:6px 10px;font-size:.62rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);border-bottom:2px solid var(--bdr)}
+.all-tbl td{padding:7px 10px;border-bottom:1px solid var(--bdr);color:var(--t1)}
+.all-tbl tr:last-child td{border-bottom:none;font-weight:700;background:var(--bg2)}
+.all-tbl td:nth-child(n+2){font-family:'DM Mono',monospace;font-size:.73rem;color:var(--t2)}
+.all-tbl .pct-ok{color:var(--ok)}.all-tbl .pct-mid{color:var(--amb)}.all-tbl .pct-no{color:var(--err)}
+@media(max-width:760px){:root{--sb:230px}.sb{transform:translateX(calc(-1 * var(--sb)))}.sb.open{transform:translateX(0)}.cnt{margin-left:0!important}.hstats .hs:nth-child(n+3){display:none}}
+@media(max-width:480px){.xcard{padding:18px 16px}.opts{grid-template-columns:1fr}.fgrid{grid-template-columns:1fr 1fr}.xq{font-size:1.15rem}}
+input[type=file].hu{display:none}
+
+.wc-actions{position:absolute;top:8px;right:8px;display:flex;gap:3px;opacity:0;transition:opacity .15s}
+.wc:hover .wc-actions{opacity:1}
+.wc.lrn .wc-actions{right:26px}
+.wact-btn{width:22px;height:22px;border-radius:5px;border:1px solid var(--bdr);background:var(--sur);color:var(--t3);font-size:.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .13s;padding:0}
+.wact-btn:hover{background:var(--bg2);color:var(--t1)}
+.wact-btn.del:hover{border-color:var(--err);color:var(--err);background:rgba(220,38,38,.05)}
+.edit-box{background:var(--sur);border:1px solid var(--bdr2);border-radius:14px;width:100%;max-width:560px;box-shadow:var(--sh2);overflow:hidden;max-height:90vh;display:flex;flex-direction:column}
+.edit-body{padding:16px 20px;overflow-y:auto;flex:1}
+.edit-row{margin-bottom:12px}
+.edit-lbl{display:block;font-size:.7rem;font-weight:700;color:var(--t2);margin-bottom:3px}
+.edit-inp{width:100%;background:var(--bg2);border:1px solid var(--bdr2);border-radius:var(--r2);padding:7px 11px;color:var(--t1);font-family:'Nunito',sans-serif;font-size:.85rem;outline:none;transition:border-color .14s}
+.edit-inp:focus{border-color:var(--grn3)}
+.syncbtn{flex:1;padding:6px 4px;border-radius:var(--r2);border:1px solid var(--bdr);background:transparent;color:var(--t3);font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:600;cursor:pointer;transition:all .15s;text-align:center}
+.syncbtn:hover{border-color:var(--grn);color:var(--grn);background:var(--grnbg)}
+@keyframes fadeInUp{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+</style>
+</head>
+<body>
+<header class="tb">
+  <button class="mb" onclick="toggleSb()">&#9776;</button>
+  <div class="logo">Wort<em>schatz</em> C1</div>
+  <div class="hstats">
+    <div class="hs"><span class="hd o"></span>Выучено: <span class="hsv" id="hl">0</span></div>
+    <div class="hs"><span class="hd"></span>Верно: <span class="hsv" id="hc">0</span></div>
+    <div class="hs"><span class="hd r"></span>Ошибок: <span class="hsv" id="he">0</span></div>
+    <div class="hs"><span class="hd"></span>Слов: <span class="hsv" id="ht">0</span></div>
+  </div>
+  <button class="mb" onclick="openSettings()" title="Настройки">&#x2699;&#xFE0F;</button>
+</header>
+
+<div class="layout">
+  <div class="sbo" id="sbo" onclick="toggleSb()"></div>
+  <aside class="sb" id="sb">
+    <div class="sbh">Темы</div>
+    <div class="tlist" id="tlist"></div>
+    <div class="sbf">
+      <button class="atbtn" onclick="openAt()">&#xFF0B; Добавить тему</button>
+      <div style="display:flex;gap:5px;margin-top:6px"><button class="syncbtn" onclick="exportData()">&#x1F4E4; Экспорт</button><button class="syncbtn" onclick="document.getElementById('importFI').click()">&#x1F4E5; Импорт</button><input type="file" id="importFI" accept=".json" class="hu" onchange="importData(event)"></div>
+    </div>
+  </aside>
+  <div class="cnt" id="cnt">
+    <nav class="vnav">
+      <button class="vb act" onclick="showV('browse',this)">&#x1F4DA; Слова</button>
+      <div class="vsep"></div>
+      <button class="vb" onclick="showV('exercise',this)">&#x1F3AF; Упражнения</button>
+      <div class="vsep"></div>
+      <button class="vb" onclick="showV('stats',this)">&#x1F4CA; Статистика</button>
+    </nav>
+    <div class="main">
+      <div id="v-browse" class="view act">
+        <div class="sl">Пакеты слов</div>
+        <div class="pgrid" id="pg"></div>
+        <div class="sl" id="wsl">Слова · Пакет 1</div>
+        <div class="wgrid" id="wg"></div>
+        <div style="margin-top:12px"><button class="atbtn" style="max-width:200px" onclick="addWord()">&#xFF0B; Добавить слово</button></div>
+      </div>
+      <div id="v-exercise" class="view">
+        <div id="xs">
+          <div class="sl">Тип упражнения</div>
+          <div class="mgrid">
+            <div class="mc sel" onclick="selM(this,'mc')"><span class="mci">&#x1F524;</span><div class="mcn">Выбрать вариант</div><div class="mcd">Немецкое слово &#x2192; 4 варианта перевода</div></div>
+            <div class="mc" onclick="selM(this,'fill')"><span class="mci">&#x270F;&#xFE0F;</span><div class="mcn">Ergänze den Satz</div><div class="mcd">Предложение с пропуском + русская подсказка</div></div>
+            <div class="mc" onclick="selM(this,'tr')"><span class="mci">&#x1F501;</span><div class="mcn">Übersetze ins Deutsche</div><div class="mcd">Перевод примера на русском &#x2192; впиши ключевое немецкое слово</div></div>
+          </div>
+          <div class="sl">Пакет для упражнений</div>
+          <div class="pgrid" id="xpg"></div>
+          <div class="trow">
+            <button class="bp" onclick="startEx()">Начать упражнение</button>
+            <label class="tog"><input type="checkbox" id="shuf" checked><div class="ttr"><div class="tth"></div></div>Перемешать</label>
+          </div>
+        </div>
+        <div id="xa" style="display:none">
+          <div class="exc">
+            <div class="exh">
+              <div class="xpb"><div class="xpf" id="xpf"></div></div>
+              <div class="xcnt" id="xcnt">1/12</div>
+              <button class="bs" onclick="endEx()" style="padding:4px 10px;font-size:.7rem">&#x2715; Выйти</button>
+            </div>
+            <div class="xcard" id="xc"></div>
+            <div class="xfb" id="xfb"></div>
+            <div class="xacts" id="xacts"></div>
+          </div>
+        </div>
+        <div id="xf" style="display:none">
+          <div class="fin">
+            <div class="ftl" id="ftl">Готово!</div>
+            <p style="color:var(--t2);font-size:.82rem;margin-bottom:2px" id="fsub"></p>
+            <div class="fgrid">
+              <div class="fst2"><span class="fv g" id="fco">0</span><span class="fl">Верно</span></div>
+              <div class="fst2"><span class="fv r" id="fwr">0</span><span class="fl">Ошибок</span></div>
+              <div class="fst2"><span class="fv o" id="fpc">0%</span><span class="fl">Результат</span></div>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+              <button class="bp" onclick="startEx()">Ещё раз</button>
+              <button class="bs" onclick="endEx()">К настройкам</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="v-stats" class="view">
+        <div class="stit">Все темы</div>
+        <table class="all-tbl" id="alltbl"></table>
+        <div class="stit">Текущая тема: <span id="cur-tname"></span></div>
+        <div class="sgrid" id="sbig"></div>
+        <div class="stit">Прогресс по пакетам</div>
+        <div class="ppl" id="ppl"></div>
+        <div class="stit">Сложные слова</div>
+        <div class="hwl" id="hwl"></div>
+        <div style="margin-top:20px"><button class="bs" onclick="if(confirm('Сбросить статистику?'))rstats()">&#x1F5D1; Сбросить</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- IMAGE MODAL -->
+<div class="ovl" id="imgM" onclick="if(event.target===this)closeImg()">
+  <div class="mbox">
+    <div class="mhdr"><div class="mttl">Добавить картинку</div><button class="mxbtn" onclick="closeImg()">&#x2715;</button></div>
+    <div class="mbdy">
+      <label class="dz" id="imgDZ" for="imgFI">
+        <span class="dzi">&#x1F5BC;</span>
+        <div class="dzt">Нажми или перетащи изображение</div>
+        <div class="dzs">JPG, PNG, WebP, GIF</div>
+      </label>
+      <input type="file" id="imgFI" accept="image/*" class="hu" onchange="onImgFile(event)">
+      <div class="ipw" id="ipw"><img id="ipv" class="ipv" src="" alt=""></div>
+    </div>
+    <div class="mft">
+      <button class="bs" onclick="closeImg()">Отмена</button>
+      <button class="bp" id="imgOK" style="display:none" onclick="saveImg()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD TOPIC MODAL -->
+<div class="ovl" id="atM" onclick="if(event.target===this)closeAt()">
+  <div class="atbox">
+    <div class="attl">Добавить тему</div>
+    <div class="atbd">
+      <label class="atlb">Иконка</label>
+      <div class="erow" id="erow"></div>
+      <label class="atlb" style="margin-top:12px">Название темы</label>
+      <input class="atip" id="atName" placeholder="Например: Umwelt, Politik…">
+      <label class="atlb" style="margin-top:12px">Загрузить PDF или TXT</label>
+      <div class="fdz" id="atDZ" onclick="document.getElementById('atFI').click()">
+        <div class="fdi">&#x1F4C4;</div>
+        <div class="fdt">Нажми или перетащи файл</div>
+        <div class="fds">PDF из Google Sheets или TXT</div>
+      </div>
+      <input type="file" id="atFI" accept=".pdf,.txt,.csv" class="hu" onchange="onTopicFile(event)">
+      <div class="fst" id="fst"></div>
+      <div class="phinт">
+        <strong style="color:var(--t2)">TXT формат</strong> (разделитель |):<br>
+        <code>слово | формы | перевод | пример DE | пример RU</code><br><br>
+        <strong style="color:var(--t2)">PDF</strong> — экспорт таблицы из Google Sheets, колонки в том же порядке
+      </div>
+    </div>
+    <div class="atft">
+      <button class="bs" onclick="closeAt()">Отмена</button>
+      <button class="bp" onclick="confirmAt()">Добавить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────
+const KW = [
+{de:"der Rausch",fm:"",ru:"опьянение, хмель",k:"Rausch",de2:"Er war in einem Rausch.",ru2:"Он был в состоянии опьянения."},
+{de:"sich einen Rausch ankneipen/antrinken",fm:"",ru:"напиваться, подвыпить",k:"angekneipt",de2:"Die Studenten haben sich ordentlich einen Rausch angekneipt.",ru2:"Студенты хорошенько напились."},
+{de:"einen Rausch bekommen",fm:"",ru:"хмелеть, слегка опьянеть",k:"Rausch",de2:"Nach zwei Gläsern Wein bekam sie schon einen leichten Rausch.",ru2:"После двух бокалов вина она уже слегка опьянела."},
+{de:"mit D gleichgesetzt werden",fm:"setzte gleich, gleichgesetzt",ru:"отождествляться, приравниваться к",k:"gleichgesetzt",de2:"Zynismus wird oft fälschlicherweise mit Sarkasmus gleichgesetzt.",ru2:"Цинизм часто ошибочно приравнивают к сарказму."},
+{de:"sich (Akk) ausbreiten",fm:"breitete aus, ausgebreitet",ru:"распространяться, расширяться",k:"breitete",de2:"Die Infektion breitete sich schnell aus.",ru2:"Инфекция быстро распространялась."},
+{de:"die Marotte (-n)",fm:"",ru:"каприз, причуда, бзик",k:"Marotten",de2:"Sie hat einige seltsame Marotten.",ru2:"У неё есть несколько странных привычек."},
+{de:"ernstzunehmend",fm:"",ru:"серьёзный (заслуживающий внимания)",k:"ernstzunehmende",de2:"Das ist eine ernstzunehmende Situation.",ru2:"Эту ситуацию стоит воспринимать серьёзно."},
+{de:"die Kaufstörung",fm:"",ru:"нарушение покупательного поведения",k:"Kaufstörung",de2:"Bei einer Kaufstörung verliert die Person die Kontrolle über ihr Konsumverhalten.",ru2:"При расстройстве покупательного поведения человек теряет контроль."},
+{de:"etw. (Akk) aufweisen",fm:"wies auf, aufgewiesen",ru:"иметь, обнаруживать, проявлять",k:"weist",de2:"Dieses Produkt weist erhebliche Mängel auf.",ru2:"Этот продукт имеет значительные недостатки."},
+{de:"die Befriedigung",fm:"",ru:"удовлетворение, умиротворение",k:"Befriedigung",de2:"Arbeit ist die Befriedigung des Alltags, wenn die Bezahlung stimmt.",ru2:"Работа — это удовлетворение повседневной жизни, когда оплата соответствует."},
+{de:"etw. (Akk) betäuben",fm:"betäubte, betäubt",ru:"заглушать, притуплять",k:"betäubt",de2:"Zu viel Alkohol betäubt unsere Sinne.",ru2:"Слишком много алкоголя притупляет наши чувства."},
+{de:"materielle Güter (pl)",fm:"",ru:"товары, материальные блага",k:"Güter",de2:"Alle Güter werden im Rahmen der Gütertrennung aufgeteilt.",ru2:"Все товары будут разделены в рамках раздела имущества."},
+{de:"der Seelentröster / jmdn. trösten",fm:"tröstete, getröstet",ru:"утешитель души / утешать",k:"Seelentröster",de2:"Nach der Trennung war ihre Katze ihr einziger Seelentröster.",ru2:"После расставания её кот был единственным утешением."},
+{de:"an etw. verzweifeln / verzweifelter Versuch",fm:"verzweifelte, verzweifelt",ru:"отчаиваться / отчаянная попытка",k:"verzweifelter",de2:"Smileys sind ein verzweifelter Versuch, Gefühle in Sprachen mitzuteilen.",ru2:"Смайлики — это отчаянная попытка передать чувства на языках."},
+{de:"perfide",fm:"",ru:"коварный, подлый, предательский",k:"perfiden",de2:"Niemand konnte ahnen, dass Maria hinter diesen perfiden Machenschaften steckte.",ru2:"Никто не мог предположить, что Мария стоит за этими коварными махинациями."},
+{de:"der Drang (nach etw.)",fm:"",ru:"позыв, влечение, тяга",k:"Drang",de2:"Tom widerstand dem Drang zu schreien.",ru2:"Том сопротивлялся желанию закричать."},
+{de:"unbändig (unbändiger Drang)",fm:"",ru:"буйный, неукротимый",k:"unbändig",de2:"Ich fühle mich unbändig dazu hingezogen.",ru2:"Я чувствую к этому неодолимое влечение."},
+{de:"letztlich",fm:"",ru:"в заключение, в конце концов",k:"letztlich",de2:"Er ist letztlich an der Vergiftung gestorben.",ru2:"Он в конечном итоге умер от отравления."},
+{de:"einer Sache erliegen",fm:"erlag, erlegen",ru:"поддаваться, уступать",k:"erlag",de2:"Er erlag nie einer Versuchung.",ru2:"Он никогда не поддавался искушению."},
+{de:"regelrecht",fm:"",ru:"по-настоящему, прямо-таки, буквально",k:"regelrecht",de2:"Die Menschen pressten sich regelrecht in den Fahrstuhl.",ru2:"Люди буквально втиснулись в лифт."},
+{de:"die Vernunft",fm:"",ru:"благоразумие, здравый смысл, рассудок",k:"Vernunft",de2:"Die Stimme der Vernunft ist leise.",ru2:"Голос разума тихий."},
+{de:"die Ernüchterung",fm:"",ru:"отрезвление, разочарование",k:"Ernüchterung",de2:"Die Euphorie wich schon bald einer rasch ausbreitenden Ernüchterung.",ru2:"Эйфория вскоре сменилась быстро распространяющимся разочарованием."},
+{de:"prompt",fm:"",ru:"аккуратный, быстрый, немедленный",k:"promptes",de2:"Durch sein promptes Handeln konnte eine Infektion verhindert werden.",ru2:"Благодаря его оперативным действиям удалось предотвратить инфекцию."},
+{de:"zwanghaft",fm:"",ru:"навязчивый, компульсивный",k:"zwanghafte",de2:"Sie ist eine zwanghafte Lügnerin.",ru2:"Она компульсивная лгунья."},
+{de:"unweigerlich",fm:"",ru:"неизбежный, обязательный",k:"unweigerlich",de2:"Die Zeit vergeht und verändert unweigerlich Umstände, Situationen und Menschen.",ru2:"Время течёт и неизбежно изменяет обстоятельства, ситуации и людей."},
+{de:"nach außen hin wirken",fm:"",ru:"производить впечатление снаружи, казаться (для других)",k:"wirkt",de2:"Nach außen hin wirkt er ruhig, aber innerlich ist er sehr angespannt.",ru2:"Снаружи он кажется спокойным, но внутри сильно напряжён."},
+{de:"im Verborgenen",fm:"",ru:"тайно, незаметно",k:"Verborgenen",de2:"Die prachtvollsten Blumen blühen oft im Verborgenen.",ru2:"Самые великолепные цветы часто цветут в тайне."},
+{de:"der Teufelskreis",fm:"",ru:"порочный, замкнутый круг",k:"Teufelskreis",de2:"Wie können wir aus diesem Teufelskreis ausbrechen?",ru2:"Как мы можем вырваться из этого порочного круга?"},
+{de:"die Scham / vor Scham vergehen",fm:"",ru:"стыд / сгорать от стыда",k:"Scham",de2:"Er wollte am liebsten vor Scham vergehen, als er den Fehler bemerkte.",ru2:"Ему хотелось сгореть от стыда, когда он заметил ошибку."},
+{de:"das Versagen",fm:"",ru:"отказ, сбой, неудача",k:"Versagen",de2:"Wie erklärst du dir sein Versagen?",ru2:"Как ты объясняешь его неудачу?"},
+{de:"jmdn. anfeuern",fm:"feuerte an, angefeuert",ru:"воодушевлять, подстрекать кого-то",k:"feuerte",de2:"Er feuerte die Soldaten mit Hasstiraden zum Kämpfen an.",ru2:"Он подстрекал солдат к борьбе ненавистными речами."},
+{de:"sich beschleunigen",fm:"beschleunigte, beschleunigt",ru:"ускоряться",k:"beschleunigte",de2:"Er beschleunigte seine Schritte.",ru2:"Он ускорил свои шаги."},
+{de:"endgültig",fm:"",ru:"окончательный",k:"endgültige",de2:"Gebt mir eine endgültige Antwort.",ru2:"Дайте мне окончательный ответ."},
+{de:"in Akk stürzen",fm:"stürzte, gestürzt",ru:"упасть, свалиться во что-то",k:"stürzte",de2:"Der Schauspieler stürzte in den Orchestergraben.",ru2:"Актёр упал в оркестровую яму."},
+{de:"sich als etw. entpuppen",fm:"entpuppte, entpuppt",ru:"оказываться кем/чем-либо",k:"entpuppte",de2:"Das Abkommen entpuppte sich als Luftblase.",ru2:"Соглашение оказалось мыльным пузырём."},
+{de:"einer Sache gegensteuern",fm:"steuerte gegen, gegengesteuert",ru:"принимать встречные меры, противодействовать",k:"Gegensteuern",de2:"Der Sinkflug der Rupie setzt sich trotz Gegensteuern fort.",ru2:"Снижение рупии продолжается, несмотря на меры противодействия."},
+{de:"abgleiten",fm:"glitt ab, abgeglitten",ru:"соскользнуть, скатиться",k:"abgleiten",de2:"Man kann sich kaum vorstellen, dass jemand wie Sie so abgleiten kann.",ru2:"Трудно представить, что кто-то вроде вас может так скатиться."},
+{de:"über seine Verhältnisse leben",fm:"",ru:"жить не по средствам",k:"Verhältnisse",de2:"Wenn Zeit Geld ist, dann lebt jeder über seine Verhältnisse.",ru2:"Если время — деньги, значит, каждый живёт не по средствам."},
+{de:"auf großem Fuße leben",fm:"",ru:"жить на широкую ногу",k:"Fuß",de2:"Er lebte auf großem Fuß und innerhalb eines Jahres war das ganze Erbe hin.",ru2:"Он жил на широкую ногу, и за год всё наследство было потрачено."},
+{de:"eine unkontrollierte Abwärtsspirale",fm:"",ru:"неконтролируемая нисходящая спираль",k:"Abwärtsspirale",de2:"Sie versuchte, aus der emotionalen Abwärtsspirale herauszukommen.",ru2:"Она пыталась выбраться из эмоциональной нисходящей спирали."},
+{de:"das Ansehen",fm:"",ru:"репутация, престиж, авторитет",k:"Ansehen",de2:"Sein Gewissen war Tom wichtiger als sein Ansehen.",ru2:"Его совесть была для Тома важнее, чем его репутация."},
+{de:"längst",fm:"",ru:"очень давно, с давних пор",k:"längst",de2:"Der Zug ist längst angekommen.",ru2:"Поезд давно прибыл."},
+{de:"nicht mehr nur",fm:"",ru:"уже не только, больше не просто",k:"nicht mehr nur",de2:"Dafür ist jetzt nicht mehr nur entscheidend, wie fit jemand körperlich ist.",ru2:"Теперь уже не только важно, насколько кто-то физически подготовлен."},
+{de:"etw. antreiben",fm:"trieb an, angetrieben",ru:"приводить в движение, побуждать",k:"angetrieben",de2:"Die Mühle wird von einem Wasserrad angetrieben.",ru2:"Мельница приводится в действие водяным колесом."},
+{de:"reicht von … bis hin zu …",fm:"",ru:"простирается от … вплоть до …",k:"reichen",de2:"Seine Interessen reichen von Physik bis hin zur Kunstgeschichte.",ru2:"Его интересы — от физики вплоть до истории искусства."},
+{de:"dem Konsum frönen",fm:"frönte, gefrönt",ru:"предаваться потреблению",k:"frönt",de2:"An Feiertagen frönt man gern dem Konsum.",ru2:"В праздники люди охотно предаются потреблению."},
+{de:"oberstes",fm:"",ru:"верховный",k:"oberstes",de2:"Die EU hat auch ein oberstes Gericht.",ru2:"ЕС также имеет высший суд."},
+{de:"sein Geld zusammenhalten",fm:"",ru:"экономить деньги, быть бережливым",k:"zusammen",de2:"Er hielt sein Geld zusammen, weil er es für diese Reise zu brauchen glaubte.",ru2:"Он бережно хранил деньги, потому что они понадобятся для поездки."},
+{de:"die Anschaffung",fm:"",ru:"приобретение, покупка",k:"Anschaffung",de2:"Die Anschaffung einer Fritteuse will gut überlegt sein.",ru2:"Приобретение фритюрницы должно быть хорошо обдумано."},
+{de:"sich etw. anschaffen",fm:"schaffte an, angeschafft",ru:"приобретать себе что-либо",k:"anschaffen",de2:"Ich überlege, ob ich mir einen Hund anschaffen sollte.",ru2:"Я подумываю, стоит ли мне завести собаку."},
+{de:"ein hochwertiges Produkt",fm:"",ru:"высококачественный продукт",k:"hochwertiges",de2:"Ein hochwertiges Produkt hält länger und spart Geld.",ru2:"Высококачественный продукт служит дольше и экономит деньги."},
+{de:"ein langlebiges Produkt",fm:"",ru:"долговечный продукт",k:"langlebiges",de2:"Ein langlebiges Produkt schadet der Umwelt weniger.",ru2:"Долговечный продукт меньше вредит окружающей среде."},
+{de:"erschwinglich",fm:"",ru:"доступный по цене",k:"erschwinglichen",de2:"Der Laptop bietet modernste Technologie zu einem erschwinglichen Preis.",ru2:"Ноутбук предлагает самые современные технологии по доступной цене."},
+{de:"blenden",fm:"blendete, geblendet",ru:"ослеплять",k:"geblendet",de2:"Ich wurde vom Gegenverkehr geblendet.",ru2:"Я был ослеплён встречным движением."},
+{de:"Prospekte durchforsten",fm:"durchforstete, durchforstet",ru:"просматривать рекламные брошюры",k:"durchforsten",de2:"Sie durchforsten stundenlang Prospekte nach Schnäppchen.",ru2:"Они часами просматривают брошюры в поисках выгодных предложений."},
+{de:"ein Schnäppchen jagen",fm:"jagte, gejagt",ru:"охотиться за выгодными покупками",k:"Schnäppchenjäger",de2:"Nach der Ankündigung des Räumungsverkaufs stürmten die Schnäppchenjäger das Möbelgeschäft.",ru2:"После объявления распродажи охотники за скидками устремились в магазин."},
+{de:"der/die Schnäppchenjäger(in)",fm:"",ru:"охотник(ца) за скидками",k:"Schnäppchenjäger",de2:"Die Schnäppchenjäger stürmten das Möbelgeschäft.",ru2:"Охотники за скидками устремились в мебельный магазин."},
+{de:"die Rabattschlacht",fm:"",ru:"битва скидок",k:"Rabattschlacht",de2:"Zum Weihnachtsgeschäft kommt es jedes Jahr zu einer Rabattschlacht.",ru2:"Перед Рождеством каждый год происходит битва скидок."},
+{de:"jmdn. über den Tisch ziehen",fm:"",ru:"обмануть, надуть кого-либо на деньги",k:"Tisch",de2:"Viele Computerkäufer werden über den Tisch gezogen.",ru2:"Многие покупатели компьютеров попадают в ловушку."},
+{de:"etw. verkörpern",fm:"verkörperte, verkörpert",ru:"воплощать, олицетворять",k:"verkörpert",de2:"Franz Beckenbauer verkörpert wie kein anderer den Erfolg des Fußballs.",ru2:"Беккенбауэр как никто другой олицетворяет успех футбола."},
+{de:"eine untergeordnete Rolle spielen",fm:"",ru:"играть второстепенную роль",k:"untergeordnete",de2:"Preis spielt bei Luxusgütern oft eine untergeordnete Rolle.",ru2:"При покупке предметов роскоши цена часто играет второстепенную роль."},
+{de:"sich etw. zulegen",fm:"legte zu, zugelegt",ru:"прикупить себе что-либо",k:"zulegen",de2:"Tom will sich eine Wohnung in Boston zulegen.",ru2:"Том хочет приобрести квартиру в Бостоне."},
+{de:"die Zugehörigkeit",fm:"",ru:"принадлежность",k:"Zugehörigkeit",de2:"Dank seiner ethnischen Zugehörigkeit bekam er einen Posten.",ru2:"Благодаря своей этнической принадлежности он получил должность."},
+{de:"exquisit",fm:"",ru:"отличный, отменный, превосходный",k:"exquisit",de2:"Die Currywurst schmeckt heute wieder besonders exquisit.",ru2:"У колбасы под карри сегодня снова особенно чудный вкус."},
+{de:"exorbitant",fm:"",ru:"из ряда вон выходящий, огромный, чрезмерный",k:"exorbitante",de2:"Er hat eine exorbitante Summe für das Auto bezahlt.",ru2:"Он заплатил непомерную сумму за машину."},
+{de:"schlicht",fm:"",ru:"простой, скромный, незатейливый",k:"schlichte",de2:"Das ist schlichte Höflichkeit.",ru2:"Это простая вежливость."},
+{de:"jmdn. zum Kauf verleiten",fm:"verleitete, verleitet",ru:"соблазнять кого-либо на покупку",k:"verleiten",de2:"Die attraktiven Rabatte verleiten viele zum Kauf.",ru2:"Привлекательные скидки побуждают многих к покупке."},
+{de:"die Begehrlichkeit",fm:"",ru:"вожделение, желанность",k:"Begehrlichkeit",de2:"Die Luxusmarke spielt gezielt mit der Begehrlichkeit der Kunden.",ru2:"Бренд роскоши намеренно играет на желании клиентов."},
+{de:"etw. suggerieren",fm:"suggerierte, suggeriert",ru:"внушать что-либо, намекать на что-либо",k:"suggeriert",de2:"Die Art der Fragestellung suggeriert schon die Antwort.",ru2:"Характер вопроса уже подразумевает ответ."},
+{de:"zwischen diesen Polen",fm:"",ru:"между двумя крайними точками, полюсами",k:"Polen",de2:"Zwischen diesen Polen liegt die Mitte, die oft schwer zu finden ist.",ru2:"Между этими полюсами лежит середина, которую часто трудно найти."},
+{de:"die Qual der Wahl haben",fm:"",ru:"иметь муки выбора",k:"Qual",de2:"Wer die Wahl hat, hat die Qual.",ru2:"Кому выбирать, тому и страдать."},
+{de:"etw. erschweren",fm:"erschwerte, erschwert",ru:"усложнять, затруднять",k:"erschwerte",de2:"Der Schneefall erschwerte die Sicht.",ru2:"Снегопад усложнил видимость."},
+{de:"einer Versuchung widerstehen",fm:"widerstand, widerstanden",ru:"устоять перед искушением",k:"widerstehen",de2:"Manch einer, der vor der Versuchung flieht, hofft heimlich, dass sie ihn einholt.",ru2:"Некоторые, кто убегает от искушения, тайно надеются, что оно их настигнет."},
+{de:"die Wegwerfgesellschaft",fm:"",ru:"общество одноразового потребления",k:"Wegwerfgesellschaft",de2:"Wir leben in einer Wegwerfgesellschaft.",ru2:"Мы живём в обществе одноразовых вещей."},
+{de:"einer Sache gerecht werden",fm:"",ru:"соответствовать чему-либо",k:"gerecht",de2:"Die Bewertung durch die Kritiker wird dem Kunstwerk nicht gerecht.",ru2:"Оценка критиков не соответствует произведению искусства."},
+{de:"somit",fm:"",ru:"итак, следовательно, таким образом",k:"somit",de2:"Somit hat der Ausdruck zwei verschiedene Bedeutungen.",ru2:"Таким образом, выражение имеет два разных значения."},
+{de:"sich von etw. abheben",fm:"hob ab, abgehoben",ru:"отличаться от кого-то, чего-то",k:"abhob",de2:"Das weiße Beffchen hob sich von der schwarzen Kleidung ab.",ru2:"Белая шапочка выделялась на фоне чёрной одежды."},
+{de:"sich etw. entziehen",fm:"entzog, entzogen",ru:"избегать чего-то",k:"entziehen",de2:"Man kann sich der eigenen menschlichen Natur nicht entziehen.",ru2:"Нельзя избежать своей человеческой природы."},
+{de:"anmessen",fm:"maß an, angemessen",ru:"снимать мерку, приводить в соответствие",k:"angemessen",de2:"Der Schneider maß dem Kunden einen neuen Anzug an.",ru2:"Портной снял мерку с клиента для нового костюма."},
+{de:"angemessenes Preis-Leistungs-Verhältnis",fm:"",ru:"соразмерное соотношение цены и качества",k:"Preis-Leistungs-Verhältnis",de2:"Dieses Smartphone hat ein gutes Preis-Leistungs-Verhältnis.",ru2:"У этого смартфона хорошее соотношение цены и качества."},
+{de:"die Anfälligkeit",fm:"",ru:"восприимчивость, подверженность, уязвимость",k:"Anfälligkeit",de2:"Diese Anfälligkeit für Kopfschmerzen habe ich von meinem Großvater geerbt.",ru2:"Эту склонность к головным болям я унаследовал от деда."},
+{de:"vermeintlich",fm:"",ru:"мнимый, якобы",k:"vermeintlich",de2:"Es gibt viele Labels, die vermeintlich ökologische Produkte kennzeichnen.",ru2:"Существует много марок, которые якобы маркируют экологически чистые продукты."},
+{de:"beträchtlich",fm:"",ru:"значительный, значительно",k:"beträchtlichen",de2:"Er gewann einen beträchtlichen Geldbetrag.",ru2:"Он выиграл значительную сумму денег."},
+{de:"zügig",fm:"",ru:"непрерывный, в хорошем темпе",k:"zügige",de2:"Wir garantieren eine zügige Umsetzung des Plans.",ru2:"Мы гарантируем быструю реализацию плана."},
+{de:"entsorgen",fm:"entsorgte, entsorgt",ru:"ликвидировать, утилизировать",k:"entsorgt",de2:"Wie entsorgt man alte Medikamente?",ru2:"Как утилизировать старые лекарства?"},
+{de:"vernünftig",fm:"",ru:"благоразумный, разумный",k:"vernünftige",de2:"Das war eine vernünftige Regel.",ru2:"Это было разумное правило."},
+{de:"die Auseinandersetzung",fm:"",ru:"дискуссия, конфронтация, спор",k:"Auseinandersetzungen",de2:"Tom gewinnt Auseinandersetzungen gewöhnlich.",ru2:"Том обычно выигрывает споры."},
+{de:"das Greenwashing",fm:"",ru:"гринвошинг, «зелёный камуфляж»",k:"Greenwashing",de2:"Das Greenwashing schadet dem echten Umweltschutz.",ru2:"Гринвошинг наносит вред настоящей защите окружающей среды."},
+{de:"omnipräsent / ein omnipräsentes Versprechen",fm:"",ru:"вездесущий / вездесущее обещание",k:"omnipräsente",de2:"Das omnipräsente Versprechen der Werbung wird immer zweifelhafter.",ru2:"Вездесущее обещание рекламы становится всё более сомнительным."},
+{de:"erdige Farbtöne",fm:"",ru:"землистые оттенки",k:"Farbtöne",de2:"Erdige Farbtöne vermitteln ein natürliches Gefühl.",ru2:"Землистые оттенки создают ощущение естественности."},
+{de:"umweltbewusst",fm:"",ru:"экологически сознательный",k:"umweltbewusste",de2:"Diese Auszeichnung erhalten nur umweltbewusste Betreiber.",ru2:"Эту награду получают только экологически сознательные операторы."},
+{de:"naturnah",fm:"",ru:"близкий к природе",k:"naturnah",de2:"Das Produkt wird als naturnah vermarktet.",ru2:"Продукт продвигается как близкий к природе."},
+{de:"einen tatkräftigen Beitrag zum Umweltschutz leisten",fm:"",ru:"вносить деятельный вклад в защиту окружающей среды",k:"Beitrag",de2:"Jeder kann einen tatkräftigen Beitrag zum Umweltschutz leisten.",ru2:"Каждый может внести деятельный вклад в защиту окружающей среды."},
+{de:"trügerisch / der Schein ist trügerisch",fm:"",ru:"обманчивый / внешность обманчива",k:"trügerisch",de2:"Die Ruhe war trügerisch und währte nur ein halbes Jahr.",ru2:"Тишина была обманчива и длилась всего полгода."},
+{de:"die Schönfärberei",fm:"",ru:"приукрашивание действительности",k:"Schönfärberei",de2:"Das ist keine ehrliche Analyse, sondern reine Schönfärberei.",ru2:"Это не честный анализ, а чистое приукрашивание."},
+{de:"die Nachhaltigkeit",fm:"",ru:"устойчивое развитие, экологичность",k:"Nachhaltigkeit",de2:"Nachhaltigkeit ist das wichtigste Ziel moderner Unternehmen.",ru2:"Устойчивое развитие — важнейшая цель современных компаний."},
+{de:"nachhaltig",fm:"",ru:"экологичный, «с прицелом на будущее»",k:"nachhaltige",de2:"Der Betonbau wurde umgeplant in eine nachhaltige Holzkonstruktion.",ru2:"Бетонное строение переплановано в устойчивую деревянную конструкцию."},
+{de:"der Etikettenschwindel",fm:"",ru:"мошенничество с маркировкой, обман этикетки",k:"Etikettenschwindel",de2:"Das ist ein klassischer Etikettenschwindel.",ru2:"Это классический обман с маркировкой."},
+{de:"verkommen (zu D)",fm:"verkam, verkommen",ru:"деградировать, приходить в упадок",k:"verkommen",de2:"Der Duden ist zu einem schlechten Wörterbuch verkommen.",ru2:"Дуден стал плохим словарём."},
+{de:"transparent",fm:"",ru:"прозрачный, открытый",k:"transparent",de2:"Das Unternehmen muss transparenter kommunizieren.",ru2:"Компания должна общаться более прозрачно."},
+{de:"Nebelkerzen werfen",fm:"warf, geworfen",ru:"пускать пыль в глаза, отвлекать внимание",k:"Nebelkerzen",de2:"Wie viele Nebelkerzen müssen noch geworfen werden, bis der Skandal vertuscht ist?",ru2:"Сколько ещё нужно пустить дымовых завес, пока скандал замнут?"},
+{de:"die Konsumentscheidung beeinflussen",fm:"",ru:"влиять на решение о покупке",k:"beeinflussen",de2:"Werbung kann die Konsumentscheidung stark beeinflussen.",ru2:"Реклама может сильно влиять на решение о покупке."},
+{de:"raffiniert",fm:"",ru:"изысканный, утончённый, хитрый",k:"raffiniert",de2:"Die Methoden sind divers und raffiniert.",ru2:"Методы разнообразны и изощрённы."},
+{de:"die Flotte",fm:"",ru:"(авто)парк",k:"Flotte",de2:"Die Billigairline will bald ihre komplette Flotte erneuern.",ru2:"Бюджетная авиакомпания вскоре обновит весь свой флот."},
+{de:"mehr Schein als Sein",fm:"",ru:"больше видимости, чем сути",k:"Schein",de2:"Sein Projekt wirkt beeindruckend, aber es ist mehr Schein als Sein.",ru2:"Его проект выглядит впечатляющим, но это больше показуха, чем реальность."},
+{de:"den Käufern Sand in die Augen streuen",fm:"streute, gestreut",ru:"пускать пыль в глаза покупателям",k:"Sand",de2:"Tom streut dir zu viel Sand in die Augen.",ru2:"Том пускает тебе слишком много пыли в глаза."},
+{de:"das Lippenbekenntnis",fm:"",ru:"пустое обещание, слова на ветер",k:"Lippenbekenntnis",de2:"War das Management-Versprechen ernst oder nur ein Lippenbekenntnis?",ru2:"Было ли обещание руководства серьёзным или лишь пустыми словами?"},
+{de:"etw. erweist sich als etw.",fm:"erwies sich, erwiesen",ru:"что-то оказывается чем-то",k:"erweist",de2:"Das Angebot klingt gut, erweist sich aber bei genauerem Hinsehen als teuer.",ru2:"Предложение звучит хорошо, но при внимательном рассмотрении оказывается дорогим."},
+{de:"die Täuschung der Verbraucher",fm:"",ru:"обман потребителей",k:"Täuschung",de2:"Magier üben die Kunst der Täuschung aus.",ru2:"Маги практикуют искусство обмана."},
+{de:"guten Willens",fm:"",ru:"с добрыми намерениями",k:"Willens",de2:"Er war ehrlich guten Willens, auch wenn das Ergebnis nicht perfekt war.",ru2:"Он действовал с добрыми намерениями, даже если результат был не идеальным."},
+{de:"der ökologische Fußabdruck",fm:"",ru:"экологический след",k:"Fußabdruck",de2:"Jeder kann seinen ökologischen Fußabdruck reduzieren.",ru2:"Каждый может сократить свой экологический след."},
+{de:"dem Ziel entgegenwirken",fm:"wirkte entgegen, entgegengewirkt",ru:"противодействовать цели",k:"entgegenwirken",de2:"Diese Entwicklung sollte man entgegenwirken.",ru2:"С этим развитием следует бороться."},
+{de:"die Mogelpackung",fm:"",ru:"обманчивая упаковка (вводит в заблуждение о количестве)",k:"Mogelpackung",de2:"Das Produkt sieht groß aus, ist aber eine Mogelpackung.",ru2:"Продукт выглядит крупным, но это обманчивая упаковка."},
+{de:"auf dem Müll landen",fm:"landete, gelandet",ru:"оказываться на свалке",k:"Müll",de2:"Viele Produkte landen nach kurzer Zeit auf dem Müll.",ru2:"Многие продукты оказываются на свалке через короткое время."},
+{de:"die Glaubwürdigkeit einbüßen",fm:"büßte ein, eingebüßt",ru:"терять доверие / репутацию",k:"Glaubwürdigkeit",de2:"Das Unternehmen hat durch den Skandal viel Glaubwürdigkeit eingebüßt.",ru2:"Компания потеряла много доверия из-за скандала."},
+{de:"auf mehr Nachhaltigkeit setzen",fm:"setzte, gesetzt",ru:"делать ставку на большую экологичность",k:"Nachhaltigkeit",de2:"Immer mehr Unternehmen setzen auf mehr Nachhaltigkeit.",ru2:"Всё больше компаний делают ставку на экологичность."},
+{de:"unlauter",fm:"",ru:"недобросовестный",k:"Unlautere",de2:"Unlautere Mittel führen zwingend zu unlauteren Zielen.",ru2:"Нечестные средства неизбежно приводят к нечестным целям."},
+{de:"etw. im Keim ersticken",fm:"erstickte, erstickt",ru:"зарубить что-то на корню",k:"Keim",de2:"Die Meuterei wurde im Keim erstickt.",ru2:"Восстание было подавлено в зародыше."},
+{de:"etw. ist nur die Spitze des Eisbergs",fm:"",ru:"это лишь верхушка айсберга",k:"Eisbergs",de2:"Das ist nur die Spitze des Eisbergs.",ru2:"Это лишь верхушка айсберга."},
+{de:"Greenwashing unterbinden",fm:"unterband, unterbunden",ru:"пресекать гринвошинг",k:"unterbinden",de2:"Wir müssen das Greenwashing unterbinden.",ru2:"Мы должны пресечь гринвошинг."},
+{de:"das A und O sein",fm:"",ru:"быть альфой и омегой, самым главным",k:"A und O",de2:"Das Rollenstudium ist das A und O der Schauspielerei.",ru2:"Изучение ролей — это основа актёрского мастерства."},
+{de:"sich nichts vorgaukeln lassen",fm:"gaukelte vor, vorgegaukelt",ru:"не давать себя обмануть",k:"vorgaukeln",de2:"Er lässt sich nichts vorgaukeln und prüft alle Informationen genau.",ru2:"Он не позволяет себя обманывать и тщательно проверяет всю информацию."},
+{de:"die halbe Miete",fm:"",ru:"полдела, половина успеха",k:"Miete",de2:"Gute Vorbereitung ist schon die halbe Miete.",ru2:"Хорошая подготовка — это уже половина успеха."},
+{de:"es bedarf G.",fm:"",ru:"требуется что-либо (в род. падеже)",k:"bedarf",de2:"Grundsätzlich bedarf es einer größeren Beteiligung.",ru2:"В принципе, требуется большее участие."},
+{de:"etw. auf Herz und Nieren prüfen",fm:"",ru:"тщательно проверить что-либо",k:"Herz",de2:"Bevor wir die Maschine kaufen, müssen wir sie auf Herz und Nieren prüfen.",ru2:"Прежде чем купить машину, мы должны тщательно её проверить."},
+{de:"D. einen Riegel vorschieben",fm:"schob vor, vorgeschoben",ru:"положить конец чему-либо, пресечь",k:"Riegel",de2:"Maria wird das immer wieder machen, wenn dem niemand einen Riegel vorschiebt.",ru2:"Мария будет делать это снова и снова, если никто её не остановит."},
+{de:"die Spreu vom Weizen trennen",fm:"",ru:"отделять зёрна от плевел",k:"Spreu",de2:"Fernsehunterhaltung ist die Kunst, die Spreu vom Weizen zu trennen.",ru2:"Телевизионные развлечения — это искусство отделять зёрна от плевел."},
+{de:"etw. entlarven",fm:"entlarvte, entlarvt",ru:"разоблачать что-либо",k:"entlarvt",de2:"Die Zeit entlarvt die Lüge sowie die Wahrheit.",ru2:"Время разоблачает ложь, так же как и истину."},
+{de:"jmdn. in scheinbarer Sicherheit wiegen",fm:"wiegte, gewiegt",ru:"убаюкивать иллюзией мнимой безопасности",k:"wiegt",de2:"Die stabile Wirtschaftslage wiegt uns in einer scheinbaren Sicherheit.",ru2:"Стабильная экономическая ситуация убаюкивает нас мнимой безопасностью."},
+{de:"zur Dauerschleife werden",fm:"",ru:"превратиться в замкнутый круг, бесконечное повторение",k:"Dauerschleife",de2:"Seine Beschwerden werden langsam zur Dauerschleife.",ru2:"Его жалобы медленно превращаются в бесконечное повторение."},
+{de:"innovativ",fm:"",ru:"инновационный",k:"innovativer",de2:"Dank innovativer Technologien werden täglich neue Wunder entdeckt.",ru2:"Благодаря инновационным технологиям каждый день открываются новые чудеса."},
+{de:"verankert",fm:"",ru:"закреплённый, глубоко укоренённый",k:"verankert",de2:"Der Respekt vor der Totenruhe ist sogar gesetzlich verankert.",ru2:"Уважение к покою мертвых даже закреплено законом."},
+{de:"der Wunsch nach + Dat.",fm:"",ru:"желание чего-либо",k:"Wunsch",de2:"Viele Menschen spielen Lotto mit dem Wunsch nach Reichtum über Nacht.",ru2:"Много людей покупают лотерейные билеты, мечтая разбогатеть в одночасье."},
+{de:"der Status quo",fm:"",ru:"статус-кво, существующее положение дел",k:"quo",de2:"Die Regierung möchte den Status quo bewahren.",ru2:"Правительство хочет сохранить существующее положение дел."},
+{de:"die absurde Neuerung",fm:"",ru:"абсурдное нововведение, нелепое изменение",k:"Neuerung",de2:"Die neue Regelung im Büro ist eine absurde Neuerung.",ru2:"Новое правило в офисе — абсурдное нововведение."},
+{de:"etw. spüren",fm:"spürte, gespürt",ru:"чувствовать что-либо",k:"spüre",de2:"Ich spüre meine Beine nicht.",ru2:"Я не чувствую свои ноги."},
+{de:"die limitierte Sonderedition",fm:"",ru:"лимитированная специальная серия",k:"Sonderedition",de2:"Das Buch erscheint jetzt als limitierte Sonderedition.",ru2:"Книга выходит теперь как ограниченное специальное издание."},
+{de:"die reduzierte Stückzahl",fm:"",ru:"ограниченное количество",k:"reduzierten",de2:"Wegen der reduzierten Stückzahl ist das Produkt schnell ausverkauft.",ru2:"Из-за ограниченного количества продукт быстро распродаётся."},
+{de:"die Drohung",fm:"",ru:"угроза",k:"Drohung",de2:"Die Antwort nimmt fast den Charakter einer Drohung an.",ru2:"Ответ почти принимает характер угрозы."},
+{de:"Ordnung schaffen",fm:"",ru:"создать порядок, установить систему",k:"Ordnung",de2:"Die Regierung hat neue Regeln geschaffen und so Ordnung geschaffen.",ru2:"Правительство создало новые правила и тем самым установило порядок."},
+{de:"der Warenkorb",fm:"",ru:"корзина покупок",k:"Warenkorb",de2:"Er füllt seinen Warenkorb mit unnötigen Produkten.",ru2:"Он заполняет корзину ненужными продуктами."},
+{de:"flüstern",fm:"flüsterte, geflüstert",ru:"шептать",k:"flüstert",de2:"Warum flüstert ihr?",ru2:"Вы почему шёпотом говорите?"},
+{de:"die Lösung mitliefern",fm:"lieferte mit, mitgeliefert",ru:"предлагать / прилагать решение",k:"mitliefern",de2:"Das Handbuch liefert die Aufgaben und die Lösung mit.",ru2:"Руководство прилагает задания вместе с решением."},
+{de:"etw. in etw. integrieren",fm:"integrierte, integriert",ru:"интегрировать что-либо во что-либо",k:"integrieren",de2:"Sie müssen sich in die Gesellschaft integrieren.",ru2:"Вы должны интегрироваться в общество."},
+{de:"verschmelzen in + Dat.",fm:"verschmolz, verschmolzen",ru:"сливаться в",k:"verschmolz",de2:"Dante verschmolz in seinem Werk den Gefühls- und Gedankenreichtum seiner Epoche.",ru2:"Данте объединил в своём произведении богатство чувств и мыслей своей эпохи."},
+{de:"die Sogwirkung",fm:"",ru:"эффект притяжения; «втягивающее воздействие»",k:"Sogwirkung",de2:"Die neue Serie entwickelt eine starke Sogwirkung auf die Zuschauer.",ru2:"Новый сериал оказывает сильное притягательное воздействие на зрителей."},
+{de:"zwischen Staub und schlechtem Gewissen",fm:"",ru:"между физической работой (пылью) и чувством вины",k:"Staub",de2:"Sie steckt zwischen Staub und schlechtem Gewissen, weil sie ihre Aufgaben vernachlässigt hat.",ru2:"Она ощущает внутреннее давление, так как не выполнила свои обязанности."},
+{de:"aufladen",fm:"lud auf, aufgeladen",ru:"заряжать; наделять (смыслом)",k:"aufladen",de2:"Ich muss die Batterie meines Wagens aufladen.",ru2:"Мне нужно зарядить аккумулятор моего автомобиля."},
+{de:"etw. ins Auge fassen",fm:"fasste, gefasst",ru:"присматриваться, рассматривать возможность",k:"Auge",de2:"Er fasst einen Umzug ins Auge.",ru2:"Он рассматривает возможность переезда."},
+{de:"bei einer Rabattaktion zuschlagen",fm:"schlug zu, zugeschlagen",ru:"воспользоваться акцией со скидкой",k:"zuschlagen",de2:"Viele Kunden schlagen bei einer Rabattaktion sofort zu.",ru2:"Многие клиенты сразу пользуются скидкой во время акции."},
+{de:"ausgelöst von + Dat.",fm:"",ru:"вызванный чем-либо",k:"ausgelöst",de2:"Die Lawine wurde von Skifahrern ausgelöst.",ru2:"Лавина была вызвана лыжниками."},
+{de:"Dopamin ausschütten",fm:"schüttete aus, ausgeschüttet",ru:"выделять дофамин",k:"Dopamin",de2:"Beim Kaufen schüttet das Gehirn Dopamin aus.",ru2:"Во время покупки мозг выделяет дофамин."},
+{de:"die Vorfreude",fm:"",ru:"предвкушение",k:"Vorfreude",de2:"Die Vorfreude ist schon das halbe Vergnügen.",ru2:"Ожидание — это уже половина удовольствия."},
+{de:"wie ein kleiner Rausch",fm:"",ru:"как лёгкое опьянение, как небольшая эйфория",k:"Rausch",de2:"Die Nachricht von der Beförderung fühlte sich an wie ein kleiner Rausch.",ru2:"Новость о повышении вызвала лёгкое чувство эйфории."},
+{de:"aufreißen",fm:"riss auf, aufgerissen",ru:"разрывать, вскрывать",k:"aufgerissen",de2:"Marias Jeanshose ist an den Knien aufgerissen.",ru2:"Джинсы Марии порваны на коленях."},
+{de:"der Knackpunkt",fm:"",ru:"переломный момент, ключевой вопрос",k:"Knackpunkt",de2:"Der Knackpunkt in den Verhandlungen war die Gehaltsfrage.",ru2:"Ключевым моментом на переговорах был вопрос о зарплате."},
+{de:"vor der Tür stehen",fm:"",ru:"быть на пороге (в прямом и переносном смысле)",k:"Tür",de2:"Der Herbst steht vor der Tür.",ru2:"Осень уже на пороге."},
+{de:"flüchtig",fm:"",ru:"мимолётный, мгновенный",k:"flüchtig",de2:"Glück ist flüchtig.",ru2:"Счастье мимолётно."},
+{de:"der Reiz des Neuen",fm:"",ru:"привлекательность нового",k:"Reiz",de2:"Der Reiz des Neuen verfliegt schnell.",ru2:"Привлекательность нового быстро исчезает."},
+{de:"das Interesse verlieren",fm:"verlor, verloren",ru:"потерять интерес",k:"Interesse",de2:"Nach einer Weile verliert man das Interesse an teuren Dingen.",ru2:"Со временем теряешь интерес к дорогим вещам."},
+{de:"umständlich",fm:"",ru:"затруднительный, неудобный",k:"umständlich",de2:"Die Fräse ist etwas umständlich in der Handhabung.",ru2:"Фреза немного неудобна в использовании."},
+{de:"das Versagen (2)",fm:"",ru:"неудача, провал",k:"Versagen",de2:"Tom war ein neidischer Mensch, den das Versagen anderer erfreute.",ru2:"Том был завистливым человеком, которого радовали неудачи других."},
+{de:"der Dopaminkick",fm:"",ru:"выброс дофамина (краткая эйфория)",k:"Dopaminkick",de2:"Der schnelle Dopaminkick beim Online-Shopping hält nur kurz an.",ru2:"Быстрый выброс дофамина при онлайн-покупках длится недолго."},
+{de:"die Lücke (-n)",fm:"",ru:"пробел, разрыв",k:"Lücke",de2:"Zwischen Theorie und Praxis gibt es oft eine große Lücke.",ru2:"Между теорией и практикой часто существует большой разрыв."},
+{de:"sich etw. vornehmen",fm:"nahm vor, vorgenommen",ru:"намереваться что-то сделать, задаться целью",k:"vornehmen",de2:"Ich habe mir vorgenommen, dieses Jahr mehr zu lesen.",ru2:"Я намереваюсь в этом году больше читать."},
+{de:"scheitern",fm:"scheiterte, gescheitert",ru:"потерпеть неудачу",k:"scheitern",de2:"Viele gute Vorsätze scheitern schon nach wenigen Wochen.",ru2:"Многие хорошие намерения терпят неудачу уже через несколько недель."},
+{de:"vollkommen",fm:"",ru:"совершенно, полностью",k:"vollkommen",de2:"Das ist vollkommen normal, sich manchmal überfordert zu fühlen.",ru2:"Совершенно нормально иногда чувствовать себя перегруженным."},
+{de:"der Fehlkauf",fm:"",ru:"неудачная покупка",k:"Fehlkauf",de2:"Die teuren Schuhe waren ein echter Fehlkauf.",ru2:"Эти дорогие туфли были настоящей неудачной покупкой."},
+{de:"etw. bereuen",fm:"bereute, bereut",ru:"сожалеть о чём-либо",k:"bereut",de2:"Er bereut, so viel Geld für unnötige Dinge ausgegeben zu haben.",ru2:"Он сожалеет, что потратил так много денег на ненужные вещи."},
+{de:"das Loslassen",fm:"",ru:"отпускание, освобождение",k:"Loslassen",de2:"Loslassen fällt schwer, ist aber oft notwendig.",ru2:"Отпускание даётся тяжело, но часто необходимо."},
+{de:"rauskramen",fm:"kramte raus, rausgekramt",ru:"вытаскивать",k:"herausgekramt",de2:"Ich habe alte Fotos aus der Schublade herausgekramt.",ru2:"Я вытащил старые фотографии из ящика."},
+{de:"zu Schrott werden",fm:"",ru:"превратиться в хлам",k:"Schrott",de2:"Nach so vielen Jahren ist das Fahrrad zu Schrott geworden.",ru2:"После стольких лет велосипед превратился в хлам."},
+{de:"verwerflich",fm:"",ru:"предосудительный",k:"verwerflich",de2:"Sein Verhalten war moralisch verwerflich.",ru2:"Его поведение было морально предосудительным."},
+{de:"prächtiger",fm:"",ru:"более великолепный, роскошнее",k:"prächtigerer",de2:"Das war ein noch prächtigerer Anblick als erwartet.",ru2:"Это было ещё более великолепное зрелище, чем ожидалось."},
+{de:"vorschreiben",fm:"schrieb vor, vorgeschrieben",ru:"предписывать",k:"vorgeschrieben",de2:"Die Schule schreibt den Schülern eine bestimmte Kleidung vor.",ru2:"Школа предписывает ученикам определённую одежду."},
+{de:"etw. vorantreiben",fm:"trieb voran, vorangetrieben",ru:"продвигать что-то вперёд",k:"voran",de2:"Die Regierung treibt die Digitalisierung zum Nutzen der Bürger voran.",ru2:"Правительство продвигает цифровизацию на благо граждан."},
+{de:"ausgestattet sein mit",fm:"stattete aus, ausgestattet",ru:"оснащённый, оборудованный",k:"ausgestattet",de2:"Das Labor ist mit modernsten Geräten ausgestattet.",ru2:"Лаборатория оснащена новейшим оборудованием."},
+{de:"abschaffen",fm:"schaffte ab, abgeschafft",ru:"отменять, упразднять",k:"abgeschafft",de2:"Viele Länder haben alte Regeln abgeschafft.",ru2:"Многие страны отменили старые правила."},
+{de:"die Verlockung",fm:"",ru:"соблазн",k:"Verlockung",de2:"Die Verlockung war zu groß, um widerstehen zu können.",ru2:"Соблазн был слишком велик, чтобы устоять."},
+{de:"erzeugen",fm:"erzeugte, erzeugt",ru:"производить, создавать",k:"erzeugt",de2:"Diese Musik erzeugt eine ruhige Stimmung.",ru2:"Эта музыка создаёт спокойное настроение."},
+{de:"ein sinnstiftendes Leben",fm:"",ru:"осмысленная жизнь",k:"sinnstiftenden",de2:"Viele Menschen suchen nach einem sinnstiftenden Leben.",ru2:"Многие люди ищут осмысленную жизнь."},
+{de:"aufgeben",fm:"gab auf, aufgegeben",ru:"сдаваться, бросать",k:"aufgegeben",de2:"Er hat nicht aufgegeben, obwohl es schwierig war.",ru2:"Он не сдался, хотя было трудно."},
+{de:"der Vordergrund",fm:"",ru:"передний план",k:"Vordergrund",de2:"Im Vordergrund des Bildes sieht man ein kleines Haus.",ru2:"На переднем плане картины видно маленький дом."},
+{de:"der Drang zu + Dat.",fm:"",ru:"сильное стремление к чему-либо",k:"Drang",de2:"Viele Menschen verspüren einen starken Drang zu sofortiger Belohnung.",ru2:"Многие люди испытывают сильное стремление к немедленному вознаграждению."},
+{de:"sich etw. leisten können",fm:"konnte sich leisten",ru:"мочь себе что-то позволить",k:"leisten",de2:"Nicht jeder kann sich teure Hobbys leisten.",ru2:"Не каждый может позволить себе дорогие хобби."},
+{de:"auftreten",fm:"trat auf, aufgetreten",ru:"проявляться, возникать",k:"treten",de2:"Die Symptome treten meist plötzlich auf.",ru2:"Симптомы обычно возникают внезапно."},
+{de:"einen Krankheitswert bekommen",fm:"bekam, bekommen",ru:"приобрести статус заболевания",k:"Krankheitswert",de2:"Manche Verhaltensweisen können einen Krankheitswert bekommen.",ru2:"Некоторые виды поведения могут приобрести статус заболевания."},
+{de:"etw. belächeln",fm:"belächelte, belächelt",ru:"посмеиваться над чем-то",k:"belächelt",de2:"Früher wurde das Problem belächelt.",ru2:"Раньше над этой проблемой посмеивались."},
+{de:"etw. ruinieren",fm:"ruinierte, ruiniert",ru:"губить, разорять",k:"ruinieren",de2:"Unkontrolliertes Kaufen kann die Finanzen ruinieren.",ru2:"Неконтролируемые покупки могут разрушить финансы."},
+{de:"die Impulskontrolle",fm:"",ru:"контроль над импульсами",k:"Impulskontrolle",de2:"Menschen mit geringer Impulskontrolle treffen oft spontane Entscheidungen.",ru2:"Люди с низким контролем над импульсами часто принимают спонтанные решения."},
+{de:"die Spielsucht",fm:"",ru:"игровая зависимость",k:"Spielsucht",de2:"Spielsucht betrifft immer mehr junge Menschen.",ru2:"Игровая зависимость затрагивает всё больше молодых людей."},
+{de:"die kurzfristige Linderung der inneren Anspannung",fm:"",ru:"кратковременное облегчение внутреннего напряжения",k:"Linderung",de2:"Der Kauf bietet nur eine kurzfristige Linderung der inneren Anspannung.",ru2:"Покупка даёт лишь кратковременное облегчение внутреннего напряжения."},
+{de:"der/die Betroffene",fm:"",ru:"пострадавший/-ая",k:"Betroffenen",de2:"Die Betroffenen schämen sich oft für ihr Verhalten.",ru2:"Пострадавшие часто стыдятся своего поведения."},
+{de:"das Verlangen",fm:"",ru:"желание, влечение",k:"Verlangen",de2:"Das Verlangen nach dem nächsten Kick wird immer stärker.",ru2:"Желание получить следующий «кайф» становится всё сильнее."},
+{de:"finanziell unklug",fm:"",ru:"финансово неразумно",k:"unklug",de2:"Es ist finanziell unklug, ständig über seine Verhältnisse zu leben.",ru2:"Финансово неразумно постоянно жить не по средствам."},
+{de:"der Teufelskreis (2)",fm:"",ru:"порочный круг",k:"Teufelskreis",de2:"Viele geraten in einen Teufelskreis aus Stress und impulsivem Kaufen.",ru2:"Многие попадают в порочный круг стресса и импульсивных покупок."},
+{de:"leiden unter + Dat.",fm:"litt, gelitten",ru:"страдать от чего-либо",k:"leidet",de2:"Er leidet unter starker Kaufimpulsivität.",ru2:"Он страдает от сильной импульсивности в покупках."},
+{de:"neigen zu + Dat.",fm:"neigte, geneigt",ru:"склоняться к чему-либо",k:"neigen",de2:"Manche Menschen neigen zu riskantem Verhalten.",ru2:"Некоторые люди склонны к рискованному поведению."},
+{de:"Glückshormone ausschütten",fm:"schüttete aus, ausgeschüttet",ru:"выделять гормоны счастья",k:"Glückshormone",de2:"Beim Kaufen schüttet das Gehirn Glückshormone aus.",ru2:"Во время покупки мозг выделяет гормоны счастья."},
+{de:"tiefer liegende Probleme",fm:"",ru:"глубинные проблемы",k:"liegende",de2:"Oft verbergen sich hinter dem Verhalten tiefer liegende Probleme.",ru2:"Часто за таким поведением скрываются глубинные проблемы."},
+{de:"das Belohnungssystem",fm:"",ru:"система вознаграждения",k:"Belohnungssystem",de2:"Das Belohnungssystem reagiert besonders stark auf schnelle Reize.",ru2:"Система вознаграждения особенно сильно реагирует на быстрые стимулы."},
+{de:"das Ungleichgewicht",fm:"",ru:"дисбаланс",k:"Ungleichgewicht",de2:"Ein Ungleichgewicht im Gehirn kann zu Suchtverhalten führen.",ru2:"Дисбаланс в мозге может привести к зависимому поведению."},
+{de:"der Kaufakt",fm:"",ru:"акт покупки",k:"Kaufakt",de2:"Der Kaufakt selbst löst oft ein Gefühl der Erleichterung aus.",ru2:"Сам акт покупки часто вызывает чувство облегчения."},
+{de:"beitragen zu + Dat.",fm:"trug bei, beigetragen",ru:"способствовать чему-либо",k:"beitragen",de2:"Mehr Wissen kann zur Prävention beitragen.",ru2:"Большая осведомлённость может способствовать профилактике."},
+{de:"das Warnzeichen",fm:"",ru:"сигнал тревоги, предупредительный знак",k:"Warnzeichen",de2:"Häufige Impulskäufe können ein Warnzeichen sein.",ru2:"Частые импульсивные покупки могут быть тревожным сигналом."},
+{de:"das Ausmaß",fm:"",ru:"масштаб, степень",k:"Ausmaß",de2:"Das Ausmaß der Probleme wird oft unterschätzt.",ru2:"Масштаб проблемы часто недооценивается."},
+{de:"das Anhäufen von Schulden",fm:"",ru:"накопление долгов",k:"Anhäufen",de2:"Das ständige Anhäufen von Schulden kann in die Krise führen.",ru2:"Постоянное накопление долгов может привести к кризису."},
+{de:"die Heilung",fm:"",ru:"исцеление",k:"Heilung",de2:"Die Heilung erfordert Zeit und professionelle Unterstützung.",ru2:"Исцеление требует времени и профессиональной поддержки."},
+{de:"die gesunde Bewältigungsstrategie",fm:"",ru:"здоровая стратегия преодоления",k:"Bewältigungsstrategie",de2:"Eine gesunde Bewältigungsstrategie kann Rückfälle verhindern.",ru2:"Здоровая стратегия преодоления может предотвратить рецидивы."},
+{de:"etw. zurückgewinnen",fm:"gewann zurück, zurückgewonnen",ru:"вернуть что-либо",k:"zurückgewinnen",de2:"Betroffene wollen oft die Kontrolle über ihr Verhalten zurückgewinnen.",ru2:"Пострадавшие часто хотят вернуть контроль над своим поведением."},
+{de:"rein rutschen",fm:"rutschte rein, reingerutscht",ru:"втянуться, попасть в зависимость",k:"rutschen",de2:"Viele rutschen unbemerkt in die Sucht rein.",ru2:"Многие незаметно втягиваются в зависимость."},
+{de:"die Willensschwäche",fm:"",ru:"слабость воли",k:"Willensschwäche",de2:"Willensschwäche macht es schwierig, dem Impuls zu widerstehen.",ru2:"Слабость воли затрудняет сопротивление импульсу."},
+{de:"illusorisch",fm:"",ru:"нереалистичный, тщетный, иллюзорный",k:"illusorisch",de2:"Seine Hoffnungen hatten sich als illusorisch erwiesen.",ru2:"Его надежды оказались нереалистичными."},
+{de:"auffällig",fm:"",ru:"бросающийся в глаза, заметный",k:"auffällig",de2:"Sie war auffällig glücklich.",ru2:"Она была заметно счастлива."},
+{de:"subtil",fm:"",ru:"тонкий, сложный, изощрённый",k:"subtile",de2:"Sie hat einige wenig subtile Hinweise von sich gegeben.",ru2:"Она дала несколько не очень тонких намёков."},
+{de:"glänzend",fm:"",ru:"выдающийся, блестящий, глянцевый",k:"glänzende",de2:"Du hast eine glänzende Zukunft vor dir.",ru2:"У тебя блестящее будущее впереди."},
+{de:"schnelllebig",fm:"",ru:"быстро меняющийся, скоротечный",k:"schnelllebigen",de2:"Wir leben in einer schnelllebigen Welt.",ru2:"Мы живём в быстро меняющемся мире."},
+{de:"oberflächlich",fm:"",ru:"поверхностный, беглый",k:"oberflächliche",de2:"Das Buch hatte eine oberflächliche Handlung.",ru2:"Книга имела поверхностный сюжет."},
+{de:"befriedigend",fm:"",ru:"удовлетворительный, достаточный",k:"befriedigenden",de2:"Die Tarifverhandlungen führten zu keinem befriedigenden Ergebnis.",ru2:"Переговоры не привели к удовлетворительному результату."},
+{de:"tapfer",fm:"",ru:"смелый, отважный, храбрый",k:"tapfersten",de2:"Feuerwehrleute zählen zu den tapfersten Menschen der Welt.",ru2:"Пожарные относятся к самым смелым людям в мире."},
+{de:"glatt",fm:"",ru:"ровный, гладкий, скользкий; гладко",k:"glatt",de2:"Bis jetzt ging alles glatt.",ru2:"До сих пор всё шло гладко."},
+{de:"flüchtig (2)",fm:"",ru:"мимолётный; вскользь, мельком",k:"flüchtiger",de2:"Ein flüchtiger Blick genügt.",ru2:"Одного мимолётного взгляда достаточно."},
+{de:"kampferprobt",fm:"",ru:"испытанный в боях, опытный",k:"kampferprobte",de2:"Immer neue Busse brachten kampferprobte junge Männer an den Drehort.",ru2:"Всё новые автобусы привозили опытных в боях молодых мужчин на площадку."},
+{de:"kostspielig",fm:"",ru:"дорогостоящий",k:"kostspielig",de2:"In London ist alles kostspielig.",ru2:"В Лондоне всё дорого."},
+{de:"heimlich",fm:"",ru:"тайком, скрытно",k:"heimlich",de2:"Er hofft heimlich, dass sein Plan funktioniert.",ru2:"Он тайно надеется, что его план сработает."},
+{de:"harmlos",fm:"",ru:"безобидный",k:"harmlose",de2:"Ihre harmlose Aussage war eigentlich eine verschleierte Beleidigung.",ru2:"Её безобидное заявление было завуалированным оскорблением."},
+{de:"übrig bleiben",fm:"",ru:"оставаться (в остатке)",k:"übrig",de2:"Am Ende des Monats bleibt kaum Geld übrig.",ru2:"В конце месяца почти не остаётся денег."},
+{de:"der Sog",fm:"",ru:"притяжение, воронка, втягивающая сила",k:"Sog",de2:"Viele geraten in den Sog des Konsums.",ru2:"Многие попадают в притяжение потребления."},
+{de:"schleichend",fm:"",ru:"медленно, исподволь, постепенно",k:"schleichend",de2:"Die Veränderung passiert schleichend und bleibt lange unbemerkt.",ru2:"Изменение происходит постепенно и долго остаётся незамеченным."},
+{de:"verleihen",fm:"verlieh, verliehen",ru:"придавать, наделять",k:"verleiht",de2:"Das neue Design verleiht dem Produkt mehr Eleganz.",ru2:"Новый дизайн придаёт продукту больше элегантности."},
+{de:"bändigen",fm:"bändigte, gebändigt",ru:"укрощать, сдерживать",k:"bändigen",de2:"Er versucht, seine Impulse zu bändigen.",ru2:"Он пытается укротить свои импульсы."},
+{de:"standhalten + Dat.",fm:"hielt stand, standgehalten",ru:"выдерживать, противостоять",k:"standhält",de2:"Das System hält dem Druck nicht mehr stand.",ru2:"Система больше не выдерживает давления."},
+{de:"langfristig",fm:"",ru:"в долгосрочной перспективе",k:"langfristig",de2:"Langfristig muss sich unser Konsumverhalten ändern.",ru2:"В долгосрочной перспективе нам нужно изменить потребительское поведение."},
+{de:"tragfähig",fm:"",ru:"прочный, устойчивый (о решении)",k:"tragfähige",de2:"Nur tragfähige Lösungen können dauerhaft wirken.",ru2:"Только устойчивые решения могут работать в долгосрочной перспективе."},
+{de:"erheblich",fm:"",ru:"значительный",k:"erheblich",de2:"Die Belastung für die Umwelt ist erheblich.",ru2:"Нагрузка на окружающую среду значительна."},
+{de:"gravierend",fm:"",ru:"серьёзный, тяжёлый",k:"gravierende",de2:"Das Problem hat gravierende Folgen.",ru2:"Проблема имеет серьёзные последствия."},
+{de:"Widersprüche",fm:"",ru:"противоречия",k:"Widersprüche",de2:"In seinem Verhalten gibt es viele Widersprüche.",ru2:"В его поведении много противоречий."},
+{de:"westlich",fm:"",ru:"западный",k:"westliche",de2:"Der westliche Lebensstil ist stark konsumorientiert.",ru2:"Западный образ жизни сильно ориентирован на потребление."},
+{de:"drastisch",fm:"",ru:"резкий, радикальный",k:"drastisch",de2:"Die Preise sind drastisch gestiegen.",ru2:"Цены резко выросли."},
+{de:"der Rohstoffabbau",fm:"",ru:"добыча сырья",k:"Rohstoffabbau",de2:"Der Rohstoffabbau zerstört viele natürliche Lebensräume.",ru2:"Добыча сырья разрушает многие природные места обитания."},
+{de:"die Abfallentsorgung",fm:"",ru:"утилизация отходов",k:"Abfallentsorgung",de2:"Die Abfallentsorgung wird immer teurer.",ru2:"Утилизация отходов становится всё дороже."},
+{de:"erzeugen (2)",fm:"erzeugte, erzeugt",ru:"производить, создавать",k:"erzeugte",de2:"Die Fabrik erzeugte große Mengen Abfall.",ru2:"Завод производил большие объёмы отходов."},
+{de:"anweisen",fm:"wies an, angewiesen",ru:"поручать, инструктировать",k:"angewiesen",de2:"Der Chef wies die Mitarbeiter an, sparsamer zu arbeiten.",ru2:"Начальник поручил сотрудникам работать экономнее."},
+{de:"die Konsequenzen",fm:"",ru:"последствия",k:"Konsequenzen",de2:"Wir müssen die Konsequenzen unseres Handelns tragen.",ru2:"Мы должны нести последствия своих действий."},
+{de:"der Überfluss",fm:"",ru:"изобилие, избыток",k:"Überfluss",de2:"Wir leben im Überfluss und verschwenden viele Ressourcen.",ru2:"Мы живём в изобилии и тратим много ресурсов впустую."},
+{de:"etw. gefährden",fm:"gefährdete, gefährdet",ru:"ставить под угрозу",k:"gefährdet",de2:"Zu hoher Konsum gefährdet die Umwelt.",ru2:"Чрезмерное потребление ставит окружающую среду под угрозу."},
+{de:"die Existenz",fm:"",ru:"существование",k:"Existenz",de2:"Viele Menschen kämpfen um ihre Existenz.",ru2:"Многие люди борются за своё существование."},
+{de:"das Umdenken",fm:"",ru:"переосмысление",k:"Umdenken",de2:"Ein gesellschaftliches Umdenken ist dringend nötig.",ru2:"Общественное переосмысление крайне необходимо."},
+{de:"grün hinter den Ohren sein",fm:"",ru:"быть неопытным, «зелёным»",k:"grün",de2:"Er ist noch grün hinter den Ohren und macht viele Fehler.",ru2:"Он ещё неопытен и делает много ошибок."},
+{de:"geheim",fm:"",ru:"тайный, секретный",k:"geheime",de2:"Das ist eine geheime Information.",ru2:"Это секретная информация."},
+{de:"aufrichtig",fm:"",ru:"искренний, честный",k:"aufrichtig",de2:"Sie hat sich aufrichtig entschuldigt.",ru2:"Она искренне извинилась."},
+{de:"verschwenderisch",fm:"",ru:"расточительный",k:"verschwenderisch",de2:"Er lebt sehr verschwenderisch.",ru2:"Он живёт очень расточительно."},
+{de:"redlich",fm:"",ru:"порядочный, честный",k:"redlicher",de2:"Er ist ein redlicher Geschäftspartner.",ru2:"Он порядочный деловой партнёр."},
+{de:"minderwertig",fm:"",ru:"низкокачественный, второсортный",k:"minderwertig",de2:"Das Produkt wirkt minderwertig.",ru2:"Продукт выглядит низкокачественным."},
+{de:"erschwinglich (2)",fm:"",ru:"доступный по цене",k:"erschwinglich",de2:"Die Wohnung ist für Studenten erschwinglich.",ru2:"Квартира доступна по цене для студентов."}
+];
+
+
+var PS = Math.min(50, Math.max(5, +localStorage.getItem('wPS')||12));
+const EMOJIS = ['📚','🌿','🏛️','💼','🌍','🏠','❤️','🎭','⚖️','🔬','🍽️','✈️','💰','🗣️','🧠','🌱','📝','🎓'];
+
+// ── STATE ─────────────────────────────────────────────
+var S = (function(){ try{ return JSON.parse(localStorage.getItem('wv9')||'{}'); }catch(e){ return {}; } })();
+function sv(){ try{ localStorage.setItem('wv9', JSON.stringify(S)); }catch(e){} }
+function K(t,k,i){ return t+'|'+k+'|'+i; }
+function gL(t,i){ return !!S[K(t,'L',i)]; }
+function sL(t,i,v){ S[K(t,'L',i)]=v; sv(); }
+// ── INDEXEDDB (картинки + заметки) ────────────────────
+var _db = null;
+function openDB(){
+  return new Promise(function(resolve, reject){
+    if(_db){ resolve(_db); return; }
+    var req = indexedDB.open('wortschatz_v1', 1);
+    req.onupgradeneeded = function(e){
+      var db = e.target.result;
+      if(!db.objectStoreNames.contains('imgs'))  db.createObjectStore('imgs');
+      if(!db.objectStoreNames.contains('notes')) db.createObjectStore('notes');
+    };
+    req.onsuccess = function(e){ _db=e.target.result; resolve(_db); };
+    req.onerror   = function(e){ reject(e); };
+  });
+}
+function dbSet(store, key, val){
+  return openDB().then(function(db){
+    return new Promise(function(resolve, reject){
+      var tx = db.transaction(store,'readwrite');
+      tx.objectStore(store).put(val, key);
+      tx.oncomplete = resolve; tx.onerror = reject;
+    });
+  });
+}
+function dbGet(store, key){
+  return openDB().then(function(db){
+    return new Promise(function(resolve, reject){
+      var tx = db.transaction(store,'readonly');
+      var req = tx.objectStore(store).get(key);
+      req.onsuccess = function(){ resolve(req.result||null); };
+      req.onerror = reject;
+    });
+  });
+}
+function dbDel(store, key){
+  return openDB().then(function(db){
+    return new Promise(function(resolve, reject){
+      var tx = db.transaction(store,'readwrite');
+      tx.objectStore(store).delete(key);
+      tx.oncomplete = resolve; tx.onerror = reject;
+    });
+  });
+}
+function dbGetAll(store, keys){
+  return openDB().then(function(db){
+    return Promise.all(keys.map(function(k){
+      return new Promise(function(resolve){
+        var tx = db.transaction(store,'readonly');
+        var req = tx.objectStore(store).get(k);
+        req.onsuccess = function(){ resolve({k:k, v:req.result||null}); };
+        req.onerror   = function(){ resolve({k:k, v:null}); };
+      });
+    }));
+  });
+}
+
+// Note helpers (async)
+function gN(t,i){ return dbGet('notes', t+'|'+i); }
+function sN(t,i,v){ return dbSet('notes', t+'|'+i, v); }
+
+// Image helpers (async)
+function gI(t,i){ return dbGet('imgs', t+'|'+i); }
+function sI(t,i,v){
+  if(!v) return dbDel('imgs', t+'|'+i);
+  return dbSet('imgs', t+'|'+i, v);
+}
+
+// ── IMAGE COMPRESSION ─────────────────────────────────
+function compressImg(dataURL, maxPx, quality, cb){
+  var img = new Image();
+  img.onload = function(){
+    var w=img.width, h=img.height;
+    if(w>maxPx||h>maxPx){
+      var ratio = w>h ? maxPx/w : maxPx/h;
+      w = Math.round(w*ratio); h = Math.round(h*ratio);
+    }
+    var canvas = document.createElement('canvas');
+    canvas.width=w; canvas.height=h;
+    canvas.getContext('2d').drawImage(img,0,0,w,h);
+    cb(canvas.toDataURL('image/jpeg', quality));
+  };
+  img.src = dataURL;
+}
+function gC(t){ return S[t+'|c']||0; }
+function gE(t){ return S[t+'|e']||0; }
+function aC(t){ S[t+'|c']=(S[t+'|c']||0)+1; sv(); }
+function aE(t){ S[t+'|e']=(S[t+'|e']||0)+1; sv(); }
+function gEM(t){ return S[t+'|m']||{}; }
+function aEM(t,i){ var m=gEM(t); m[i]=(m[i]||0)+1; S[t+'|m']=m; sv(); }
+
+// ── TOPICS ────────────────────────────────────────────
+var topics = [];
+var curId = null, curPack = 0;
+var exMode = 'mc', exPack = 0, exTid = null;
+var Q = [], qi = 0, ec = 0, ew = 0, done = false, ans = '';
+var imgIdx = null, imgPending = null;
+var pendingWords = null, selEmoji = '📚';
+var _awPendingWords = null;
+var sbOpen = true;
+
+function initTopics(){
+  var saved = [];
+  try { saved = JSON.parse(localStorage.getItem('wTopics4')||'[]'); } catch(e){}
+  topics = [{id:'konsum', name:'Konsum', icon:'🛒', words: KW}].concat(saved);
+  if(!curId || !topics.filter(function(t){ return t.id===curId; })[0])
+    curId = topics[0].id;
+}
+function saveCust(){
+  var custom = topics.filter(function(t){ return t.id!=='konsum' && t.id!=='tourismus'; });
+  localStorage.setItem('wTopics4', JSON.stringify(custom));
+}
+function curT(){ return topics.filter(function(t){ return t.id===curId; })[0] || topics[0]; }
+function curW(){ var t=curT(); return t ? t.words : []; }
+function packs(w){ var r=[]; for(var i=0;i<w.length;i+=PS) r.push(w.slice(i,i+PS)); return r; }
+function cntL(t){ var c=0; for(var i=0;i<t.words.length;i++) if(gL(t.id,i)) c++; return c; }
+
+// ── SIDEBAR ───────────────────────────────────────────
+function toggleSb(){
+  var sb=document.getElementById('sb'), cnt=document.getElementById('cnt'), ov=document.getElementById('sbo');
+  if(window.innerWidth<=760){
+    sb.classList.toggle('open'); ov.classList.toggle('show');
+  } else {
+    sbOpen=!sbOpen;
+    if(sbOpen){ sb.classList.remove('col'); cnt.classList.remove('gone'); }
+    else { sb.classList.add('col'); cnt.classList.add('gone'); }
+  }
+}
+
+function renderSb(){
+  var list=document.getElementById('tlist'); list.innerHTML='';
+  for(var ti=0; ti<topics.length; ti++){
+    (function(t){
+      var lc=cntL(t), pct=t.words.length?Math.round(lc/t.words.length*100):0;
+      var d=document.createElement('div');
+      d.className='tr'+(t.id===curId?' act':'');
+      var delHtml = t.id!=='konsum' && t.id!=='tourismus'
+        ? '<button class="tdel" onclick="delT(\''+t.id+'\',event)">&#x2715;</button>'
+        : '';
+      d.innerHTML =
+        '<div class="ti">'+(t.icon||'📚')+'</div>'+
+        '<div class="tm">'+
+          '<div class="tn">'+h(t.name)+'</div>'+
+          '<div class="tsub">'+lc+'/'+t.words.length+' &middot; '+pct+'%</div>'+
+          '<div class="tpb"><div class="tpf" style="width:'+pct+'%"></div></div>'+
+        '</div>'+
+        '<button class="tdel" style="font-size:.65rem;width:22px;height:22px" onclick="openAddWords(\''+t.id+'\',event)" title="Добавить слова">&#xFF0B;</button>'+
+        delHtml;
+      d.onclick = function(e){ if(e.target.classList.contains('tdel')) return; switchT(t.id); };
+      list.appendChild(d);
+    })(topics[ti]);
+  }
+}
+
+function switchT(id){
+  curId=id; curPack=0; renderSb(); rHdr();
+  var av=document.querySelector('.vb.act');
+  var vid='browse';
+  if(av){
+    var txt=av.textContent;
+    if(txt.indexOf('Слов')>=0) vid='browse';
+    else if(txt.indexOf('Упр')>=0) vid='exercise';
+    else vid='stats';
+  }
+  if(vid==='browse') rBrowse();
+  else if(vid==='exercise') rSetup();
+  else rStats();
+  if(window.innerWidth<=760){
+    document.getElementById('sb').classList.remove('open');
+    document.getElementById('sbo').classList.remove('show');
+  }
+}
+
+function delT(id,e){
+  e.stopPropagation();
+  if(!confirm('Удалить тему?')) return;
+  topics = topics.filter(function(t){ return t.id!==id; });
+  if(curId===id) curId=topics[0].id;
+  saveCust(); renderSb(); rHdr(); rBrowse();
+}
+
+// ── HEADER ────────────────────────────────────────────
+function rHdr(){
+  var t=curT(); if(!t) return;
+  document.getElementById('hl').textContent=cntL(t);
+  document.getElementById('hc').textContent=gC(t.id);
+  document.getElementById('he').textContent=gE(t.id);
+  document.getElementById('ht').textContent=t.words.length;
+}
+
+// ── NAV ───────────────────────────────────────────────
+function showV(id,btn){
+  var views=document.querySelectorAll('.view');
+  for(var i=0;i<views.length;i++) views[i].classList.remove('act');
+  document.getElementById('v-'+id).classList.add('act');
+  var btns=document.querySelectorAll('.vb');
+  for(var i=0;i<btns.length;i++) btns[i].classList.remove('act');
+  btn.classList.add('act');
+  if(id==='browse') rBrowse();
+  if(id==='exercise') rSetup();
+  if(id==='stats') rStats();
+  rHdr();
+}
+
+// ── BROWSE ────────────────────────────────────────────
+function rBrowse(){ rPG('pg', function(i){ curPack=i; rW(); }); rW(); }
+
+function rPG(id, cb){
+  var tId = id==='pg' ? curId : (exTid||curId);
+  var topic = topics.filter(function(t){ return t.id===tId; })[0];
+  var W = topic ? topic.words : [];
+  var ps = packs(W);
+  var ap = id==='pg' ? curPack : exPack;
+  var el=document.getElementById(id); el.innerHTML='';
+  for(var i=0; i<ps.length; i++){
+    (function(pack,idx){
+      var lc=0; for(var j=0;j<pack.length;j++) if(gL(tId,idx*PS+j)) lc++;
+      var pct=Math.round(lc/pack.length*100);
+      var d=document.createElement('div');
+      d.className='pc'+(idx===ap?' sel':'');
+      d.innerHTML=
+        '<div class="pcn">&#1055;&#1072;&#1082;&#1077;&#1090; '+(idx+1)+'</div>'+
+        '<div style="font-size:.66rem;color:var(--t2)">'+lc+'/'+pack.length+'</div>'+
+        '<div class="pcb"><div class="pcf" style="width:'+pct+'%"></div></div>';
+      d.onclick=(function(ii){ return function(){
+        var pcs=document.querySelectorAll('#'+id+' .pc');
+        for(var k=0;k<pcs.length;k++) pcs[k].classList.remove('sel');
+        d.classList.add('sel'); cb(ii);
+      }; })(idx);
+      el.appendChild(d);
+    })(ps[i], i);
+  }
+}
+
+function rW(){
+  var tId=curId, W=curW(), ps=packs(W);
+  document.getElementById('wsl').textContent='Слова \u00b7 Пакет '+(curPack+1);
+  var g=document.getElementById('wg'); g.innerHTML='';
+  var pack=ps[curPack]||[];
+
+  // Build keys for batch fetch
+  var noteKeys = [], imgKeys = [];
+  for(var j=0;j<pack.length;j++){
+    var idx=curPack*PS+j;
+    noteKeys.push(tId+'|'+idx);
+    imgKeys.push(tId+'|'+idx);
+  }
+
+  // Fetch all notes and images in parallel
+  Promise.all([
+    dbGetAll('notes', noteKeys),
+    dbGetAll('imgs',  imgKeys)
+  ]).then(function(results){
+    var notesMap={}, imgsMap={};
+    results[0].forEach(function(r){ notesMap[r.k]=r.v||''; });
+    results[1].forEach(function(r){ imgsMap[r.k]=r.v||null; });
+
+    for(var j=0;j<pack.length;j++){
+      (function(w,j){
+        var idx=curPack*PS+j;
+        var il=gL(tId,idx);
+        var note=h(notesMap[tId+'|'+idx]||'');
+        var img=imgsMap[tId+'|'+idx]||null;
+        var d=document.createElement('div');
+        d.className='wc'+(il?' lrn':'');
+        var fmHtml = w.fm ? '<div class="wfm">'+h(w.fm)+'</div>' : '';
+        var learnTxt = il ? '&#x2713; Выучено' : 'Выучить';
+        var learnCls = il ? ' on' : '';
+        var actBtns = '<div class="wc-actions">'+'<button class="wact-btn" onclick="editWord(\''+tId+'\','+idx+',this)">&#x270E;</button>'+'<button class="wact-btn del" onclick="deleteWord(\''+tId+'\','+idx+')">&#x2715;</button>'+'</div>';
+        var imgHtml = img
+          ? '<img class="wthumb" src="'+img+'" alt="" onclick="openImg('+idx+')"><div class="wir"><button class="pill" onclick="openImg('+idx+')">&#x1F504; Сменить</button><button class="pill del" onclick="delImg('+idx+')">&times; Удалить</button></div>'
+          : '<button class="pill" style="margin-bottom:7px" onclick="openImg('+idx+')">&#x1F5BC; Картинка</button>';
+        d.innerHTML =
+          actBtns+
+          '<div class="wde">'+h(w.de)+'</div>'+
+          fmHtml+
+          '<div class="wru">'+h(w.ru)+'</div>'+
+          '<div class="wia" id="ia-'+idx+'">'+imgHtml+'</div>'+
+          '<div class="wed">'+h(w.de2)+'</div>'+
+          '<div class="wer">'+h(w.ru2)+'</div>'+
+          '<div class="wft">'+
+            '<textarea class="wnote" placeholder="Заметки…" data-idx="'+idx+'">'+note+'</textarea>'+
+            '<button class="wlb'+learnCls+'" data-idx="'+idx+'" onclick="tgl('+idx+',this)">'+learnTxt+'</button>'+
+          '</div>';
+        g.appendChild(d);
+      })(pack[j], j);
+    }
+
+    // Attach note listeners
+    var notes=g.querySelectorAll('.wnote');
+    for(var i=0;i<notes.length;i++){
+      (function(ta){
+        function autoGrow(){ ta.style.height='28px'; ta.style.height=ta.scrollHeight+'px'; }
+        ta.addEventListener('input', function(){ sN(tId,+ta.dataset.idx,ta.value); autoGrow(); });
+        autoGrow();
+      })(notes[i]);
+    }
+  });
+}
+
+function renderImg(tId,idx){
+  var area=document.getElementById('ia-'+idx); if(!area) return;
+  gI(tId,idx).then(function(img){
+    if(img){
+      area.innerHTML=
+        '<img class="wthumb" src="'+img+'" alt="" onclick="openImg('+idx+')">'+
+        '<div class="wir">'+
+          '<button class="pill" onclick="openImg('+idx+')">&#x1F504; Сменить</button>'+
+          '<button class="pill del" onclick="delImg('+idx+')">&times; Удалить</button>'+
+        '</div>';
+    } else {
+      area.innerHTML='<button class="pill" style="margin-bottom:7px" onclick="openImg('+idx+')">&#x1F5BC; Картинка</button>';
+    }
+  });
+}
+
+function tgl(idx,btn){
+  var tId=curId, v=!gL(tId,idx);
+  sL(tId,idx,v);
+  btn.innerHTML = v ? '&#x2713; Выучено' : 'Выучить';
+  if(v) btn.classList.add('on'); else btn.classList.remove('on');
+  var wc=btn.closest('.wc');
+  if(v) wc.classList.add('lrn'); else wc.classList.remove('lrn');
+  rHdr(); renderSb();
+  // Update only pack progress bars, not full redraw
+  var t=curT(); if(!t) return;
+  var ps=packs(t.words);
+  var chips=document.querySelectorAll('#pg .pc');
+  for(var i=0;i<chips.length;i++){
+    var lc=0; for(var j=0;j<(ps[i]||[]).length;j++) if(gL(tId,i*PS+j)) lc++;
+    var pct=ps[i]?Math.round(lc/ps[i].length*100):0;
+    var bar=chips[i].querySelector('.pcf'); if(bar) bar.style.width=pct+'%';
+    var ct=chips[i].querySelector('div[style]'); if(ct) ct.textContent=lc+'/'+(ps[i]?ps[i].length:0);
+  }
+}
+
+function delImg(idx){ sI(curId,idx,null).then(function(){ renderImg(curId,idx); }); }
+
+// ── IMAGE MODAL ───────────────────────────────────────
+function openImg(idx){
+  imgIdx=idx; imgPending=null;
+  document.getElementById('ipw').classList.remove('show');
+  document.getElementById('imgOK').style.display='none';
+  document.getElementById('imgFI').value='';
+  document.getElementById('imgM').classList.add('open');
+}
+function closeImg(){ document.getElementById('imgM').classList.remove('open'); imgIdx=null; imgPending=null; }
+function onImgFile(e){
+  var file=e.target.files[0]; if(!file) return;
+  var r=new FileReader();
+  r.onload=function(ev){
+    // Compress to max 1200px, quality 0.85
+    compressImg(ev.target.result, 1200, 0.85, function(compressed){
+      imgPending=compressed;
+      document.getElementById('ipv').src=imgPending;
+      document.getElementById('ipw').classList.add('show');
+      document.getElementById('imgOK').style.display='';
+    });
+  };
+  r.readAsDataURL(file);
+}
+function saveImg(){
+  if(imgIdx===null||!imgPending) return;
+  sI(curId,imgIdx,imgPending).then(function(){ renderImg(curId,imgIdx); closeImg(); });
+}
+
+// ── ADD TOPIC MODAL ───────────────────────────────────
+function openAt(){
+  pendingWords=null; selEmoji='📚';
+  document.getElementById('atName').value='';
+  var fs=document.getElementById('fst'); fs.className='fst'; fs.textContent='';
+  var ebs=document.getElementById('erow').querySelectorAll('.eb');
+  for(var i=0;i<ebs.length;i++) ebs[i].classList.toggle('sel', EMOJIS[i]===selEmoji);
+  document.getElementById('atM').classList.add('open');
+}
+function closeAt(){ document.getElementById('atM').classList.remove('open'); pendingWords=null; }
+
+function onTopicFile(e){
+  var file=e.target.files[0]; if(!file) return;
+  var fs=document.getElementById('fst');
+  var ext=file.name.split('.').pop().toLowerCase();
+  if(ext==='pdf'){
+    fs.className='fst ok'; fs.textContent='⏳ Читаем PDF…';
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      parsePDF(ev.target.result).then(function(words){
+        if(!words.length){ fs.className='fst err'; fs.textContent='⚠️ Слова не найдены. Попробуй TXT.'; }
+        else { pendingWords=words; fs.className='fst ok'; fs.textContent='✓ Загружено '+words.length+' слов из PDF'; }
+      }).catch(function(err){ fs.className='fst err'; fs.textContent='⚠️ Ошибка PDF: '+err.message; });
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    var r=new FileReader();
+    r.onload=function(ev){
+      var words=parseTXT(ev.target.result);
+      if(!words.length){ fs.className='fst err'; fs.textContent='⚠️ Слова не найдены. Проверь формат.'; }
+      else { pendingWords=words; fs.className='fst ok'; fs.textContent='✓ Загружено '+words.length+' слов'; }
+    };
+    r.readAsText(file,'UTF-8');
+  }
+  e.target.value='';
+}
+
+function parseTXT(text){
+  var words=[], lines=text.split('\n');
+  for(var i=0;i<lines.length;i++){
+    var p=lines[i].split('|'); for(var j=0;j<p.length;j++) p[j]=p[j].trim();
+    if(p[0]&&p[0].length>1&&p[2]){
+      var de=p[0], fm=p[1]||'', ru=p[2], de2=p[3]||de+'.', ru2=p[4]||'';
+      var k=de.split(' ').filter(function(x){ return !/^(der|die|das|sich|etw\.|jmdn?\.|ein|eine)$/i.test(x); })[0]||de.split(' ').pop()||de;
+      words.push({de:de,fm:fm,ru:ru,k:k,de2:de2,ru2:ru2});
+    }
+  }
+  return words;
+}
+
+function parsePDF(arrayBuffer){
+  return new Promise(function(resolve,reject){
+    var loadPDFjs = window.pdfjsLib ? Promise.resolve() : new Promise(function(res,rej){
+      var s=document.createElement('script');
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      s.onload=function(){ window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; res(); };
+      s.onerror=rej; document.head.appendChild(s);
+    });
+    loadPDFjs.then(function(){
+      return pdfjsLib.getDocument({data:arrayBuffer}).promise;
+    }).then(function(pdf){
+      var all=[], pages=[];
+      for(var p=1;p<=pdf.numPages;p++) pages.push(pdf.getPage(p));
+      return Promise.all(pages).then(function(pageObjs){
+        var textPromises=pageObjs.map(function(pg){ return pg.getTextContent(); });
+        return Promise.all(textPromises);
+      }).then(function(tcs){
+        for(var pi=0;pi<tcs.length;pi++){
+          var items=tcs[pi].items
+            .map(function(it){ return {t:it.str.trim(),x:Math.round(it.transform[4]),y:Math.round(it.transform[5])}; })
+            .filter(function(it){ return it.t; });
+          if(!items.length) continue;
+
+          // Sort top-to-bottom, left-to-right
+          items.sort(function(a,b){ return b.y-a.y||a.x-b.x; });
+
+          // Group into lines (Y tolerance = 3)
+          var lines=[], cy=null, cl=[];
+          for(var ii=0;ii<items.length;ii++){
+            var it=items[ii];
+            if(cy===null||Math.abs(it.y-cy)<=3){ cl.push(it); cy=it.y; }
+            else { if(cl.length) lines.push(cl); cl=[it]; cy=it.y; }
+          }
+          if(cl.length) lines.push(cl);
+
+          // Detect column boundaries from the first data line (skip header)
+          // Find line with most items (likely a full 5-col row)
+          var bestLine=lines[0];
+          for(var li=0;li<lines.length;li++){
+            if(lines[li].length>bestLine.length) bestLine=lines[li];
+          }
+          // Build col boundaries: sort bestLine items by x, gaps > 15px = new column
+          var bx=bestLine.map(function(it){return it.x;}).sort(function(a,b){return a-b;});
+          var colStarts=[bx[0]];
+          for(var ci=1;ci<bx.length;ci++){
+            if(bx[ci]-bx[ci-1]>15) colStarts.push(bx[ci]);
+          }
+          // Need at least 3 columns (de, fm/pronunciation, ru)
+          if(colStarts.length<3) colStarts=[0,120,220,380,540];
+
+          // Assign each item to a column
+          function getCol(x){
+            var col=0;
+            for(var c=colStarts.length-1;c>=0;c--){
+              if(x>=colStarts[c]-10){ col=c; break; }
+            }
+            return Math.min(col,4);
+          }
+
+          // Build table rows: group lines into logical rows
+          // A new logical row starts when col-0 has content
+          // Lines belonging to same row: col-0 empty = continuation
+          var tableRows=[], curRow=null;
+          for(var li=0;li<lines.length;li++){
+            var line=lines[li];
+            // Check if this line has a col-0 item
+            var hasCol0=false;
+            for(var k=0;k<line.length;k++){
+              if(getCol(line[k].x)===0){ hasCol0=true; break; }
+            }
+            if(hasCol0||curRow===null){
+              if(curRow) tableRows.push(curRow);
+              curRow=['','','','',''];
+            }
+            // Distribute items into columns
+            for(var k=0;k<line.length;k++){
+              var col=getCol(line[k].x);
+              if(col<5){
+                curRow[col]=(curRow[col]?(curRow[col]+' '):'')+line[k].t;
+              }
+            }
+          }
+          if(curRow) tableRows.push(curRow);
+
+          // Parse rows into words
+          for(var ri=0;ri<tableRows.length;ri++){
+            var cells=tableRows[ri];
+            var de=cells[0].trim(), fm=cells[1].trim(), ru=cells[2].trim(),
+                de2=cells[3].trim(), ru2=cells[4].trim();
+            if(!de||de.length<=1) continue;
+            if(/^(Wort|слово|word|Übersetzung|перевод)/i.test(de)) continue;
+            if(!ru) continue;
+            var kStop=/^(der|die|das|sich|etw[.]?|jmdn?[.]?|ein|eine|den|dem|des|auf|in|aus|von|zu)$/i;
+            var k=de.split(' ').filter(function(x){return !kStop.test(x)&&x.charAt(0)!=='(';})[0]||de.split(' ').pop()||de;
+            all.push({de:de,fm:fm,ru:ru,k:k,de2:de2||de+'.',ru2:ru2});
+          }
+        }
+        // Deduplicate
+        var seen={}, out=[];
+        for(var i=0;i<all.length;i++){
+          var key=all[i].de+'|'+all[i].ru;
+          if(!seen[key]){ seen[key]=1; out.push(all[i]); }
+        }
+        resolve(out);
+      });
+    }).catch(reject);
+  });
+}
+
+function confirmAt(){
+  var name=document.getElementById('atName').value.trim();
+  if(!name){ alert('Введи название темы'); return; }
+  var words=pendingWords||[];
+  var id='t'+Date.now();
+  topics.push({id:id,name:name,icon:selEmoji,words:words});
+  saveCust(); closeAt(); curId=id; curPack=0;
+  renderSb(); rHdr(); rBrowse();
+}
+
+// ── EXERCISE ──────────────────────────────────────────
+function rSetup(){
+  document.getElementById('xs').style.display='';
+  document.getElementById('xa').style.display='none';
+  document.getElementById('xf').style.display='none';
+  exTid=curId; exPack=0; rPG('xpg', function(i){ exPack=i; });
+}
+function selM(card,mode){
+  var mcs=document.querySelectorAll('.mc');
+  for(var i=0;i<mcs.length;i++) mcs[i].classList.remove('sel');
+  card.classList.add('sel'); exMode=mode;
+}
+
+function startEx(){
+  exTid=curId;
+  var topic=topics.filter(function(t){ return t.id===exTid; })[0];
+  var W=topic?topic.words:[];
+  var ps=packs(W);
+  var pack=ps[exPack]||[];
+  var words=[];
+  for(var j=0;j<pack.length;j++) words.push(Object.assign({},pack[j],{idx:exPack*PS+j}));
+  if(document.getElementById('shuf').checked) words=shuf(words);
+  Q=words; qi=0; ec=0; ew=0;
+  document.getElementById('xs').style.display='none';
+  document.getElementById('xa').style.display='';
+  document.getElementById('xf').style.display='none';
+  rQ();
+}
+function endEx(){
+  document.getElementById('xs').style.display='';
+  document.getElementById('xa').style.display='none';
+  document.getElementById('xf').style.display='none';
+  rSetup(); rHdr();
+}
+
+function allW(){
+  var r=[];
+  for(var i=0;i<topics.length;i++) r=r.concat(topics[i].words);
+  return r;
+}
+
+function rQ(){
+  done=false; ans='';
+  var w=Q[qi], tot=Q.length;
+  document.getElementById('xpf').style.width=(qi/tot*100)+'%';
+  document.getElementById('xcnt').textContent=(qi+1)+' / '+tot;
+  var fb=document.getElementById('xfb'); fb.className='xfb'; fb.textContent='';
+  if(exMode==='mc') rMC(w);
+  else if(exMode==='fill') rFill(w);
+  else rTr(w);
+}
+
+function rMC(w){
+  var all=allW(), others=all.filter(function(x){ return x.ru!==w.ru; });
+  var opts=shuf([w.ru].concat(shuf(others).slice(0,3).map(function(x){ return x.ru; })));
+  ans=w.ru;
+  var optsHtml='';
+  for(var i=0;i<opts.length;i++) optsHtml+='<button class="opt" onclick="ckMC(this)">'+h(opts[i])+'</button>';
+  document.getElementById('xc').innerHTML=
+    '<div class="xbdg">Выбрать вариант</div>'+
+    '<div class="xq">'+h(w.de)+'</div>'+
+    (w.fm?'<div class="xhint">'+h(w.fm)+'</div>':'')+
+    '<div class="opts">'+optsHtml+'</div>';
+  document.getElementById('xacts').innerHTML='<button class="bp" id="bn" onclick="nxt()" disabled>Далее &#x2192;</button>';
+  var obs=document.querySelectorAll('.opt');
+  for(var i=0;i<obs.length;i++) obs[i]._v=opts[i];
+}
+function ckMC(btn){
+  if(done) return; done=true;
+  var obs=document.querySelectorAll('.opt');
+  for(var i=0;i<obs.length;i++) obs[i].disabled=true;
+  var ok=btn._v===ans; btn.classList.add(ok?'ok':'no');
+  if(!ok) for(var i=0;i<obs.length;i++) if(obs[i]._v===ans) obs[i].classList.add('ok');
+  rec(ok); document.getElementById('bn').disabled=false;
+}
+
+function rFill(w){
+  var r=blank(w.de2,w.k); ans=r.a;
+  document.getElementById('xc').innerHTML=
+    '<div class="xbdg">Ergänze den Satz</div>'+
+    '<div class="xq">'+h(r.s)+'<button class="xkeybtn" onclick="editKey()" title="Изменить ключевое слово">&#x270E;</button></div>'+
+    '<div class="xsub">Russisch: <strong>'+h(w.ru)+'</strong></div>'+
+    '<input type="text" class="xinp" id="xi" placeholder="Deine Antwort\u2026" autocomplete="off" spellcheck="false">';
+  document.getElementById('xacts').innerHTML=
+    '<button class="bp" id="bck" onclick="ckF()">&#x2713; Проверить</button>'+
+    '<button class="bs" id="bn" onclick="nxt()" style="display:none">Далее &#x2192;</button>';
+  var inp=document.getElementById('xi');
+  inp.addEventListener('keydown', function(e){ if(e.key==='Enter') ckF(); });
+  inp.focus();
+}
+function ckF(){
+  if(done) return; done=true;
+  var inp=document.getElementById('xi'), v=inp.value.trim(), ok=nm(v)===nm(ans);
+  inp.disabled=true; inp.classList.add(ok?'ok':'no');
+  var fb=document.getElementById('xfb'); fb.className='xfb show '+(ok?'ok':'no');
+  fb.textContent=ok?'\u2713 Richtig!':'\u2717 Richtig w\u00e4re: "'+ans+'"';
+  rec(ok); document.getElementById('bck').style.display='none'; document.getElementById('bn').style.display='';
+}
+
+function rTr(w){
+  var r=blank(w.de2,w.k); ans=r.a;
+  // Show translation of example (ru2) as question, de2 with blank as hint
+  var question = w.ru2 || w.ru;
+  document.getElementById('xc').innerHTML=
+    '<div class="xbdg">\u00dcbersetze ins Deutsche</div>'+
+    '<div class="xq">'+h(question)+'</div>'+
+    '<div class="xsub">'+h(r.s)+'<button class="xkeybtn" onclick="editKey()" title="Изменить ключевое слово">&#x270E;</button></div>'+
+    '<input type="text" class="xinp" id="xi" placeholder="Deutsches Wort\u2026" autocomplete="off" spellcheck="false">';
+  document.getElementById('xacts').innerHTML=
+    '<button class="bp" id="bck" onclick="ckT()">&#x2713; Проверить</button>'+
+    '<button class="bs" id="bn" onclick="nxt()" style="display:none">Далее &#x2192;</button>';
+  var inp=document.getElementById('xi');
+  inp.addEventListener('keydown', function(e){ if(e.key==='Enter') ckT(); });
+  inp.focus();
+}
+function ckT(){
+  if(done) return; done=true;
+  var inp=document.getElementById('xi'), v=inp.value.trim(), ok=nm(v)===nm(ans);
+  inp.disabled=true; inp.classList.add(ok?'ok':'no');
+  var fb=document.getElementById('xfb'); fb.className='xfb show '+(ok?'ok':'no');
+  fb.textContent=ok?'\u2713 Richtig!':'\u2717 Richtig w\u00e4re: "'+ans+'"';
+  rec(ok); document.getElementById('bck').style.display='none'; document.getElementById('bn').style.display='';
+}
+
+function nxt(){ qi++; if(qi>=Q.length) fin(); else rQ(); }
+function fin(){
+  document.getElementById('xa').style.display='none';
+  document.getElementById('xf').style.display='';
+  var tot=Q.length, pct=Math.round(ec/tot*100);
+  var title=pct>=80?'Ausgezeichnet! \uD83C\uDF89':pct>=50?'Gut gemacht! \uD83D\uDC4D':'Weiter \u00FCben! \uD83D\uDCAA';
+  document.getElementById('ftl').textContent=title;
+  var tname=topics.filter(function(t){ return t.id===exTid; })[0];
+  document.getElementById('fsub').textContent=(tname?tname.name:'')+' \u00b7 \u041f\u0430\u043a\u0435\u0442 '+(exPack+1)+' \u00b7 '+tot+' \u0441\u043b\u043e\u0432';
+  document.getElementById('fco').textContent=ec;
+  document.getElementById('fwr').textContent=ew;
+  document.getElementById('fpc').textContent=pct+'%';
+  rHdr();
+}
+function rec(ok){ var w=Q[qi]; if(ok){ec++;aC(exTid);}else{ew++;aE(exTid);aEM(exTid,w.idx);} }
+
+// ── STATS ─────────────────────────────────────────────
+function rAllTopics(){
+  var tbl=document.getElementById('alltbl'); if(!tbl) return;
+  var totW=0,totL=0,totC=0,totE=0;
+  var rows='<tr><th>Тема</th><th>Слов</th><th>Выучено</th><th>Верно</th><th>Ошибок</th><th>%</th></tr>';
+  for(var ti=0;ti<topics.length;ti++){
+    var t=topics[ti];
+    var lc=cntL(t), c=gC(t.id), e=gE(t.id), tot=c+e, pct=tot>0?Math.round(c/tot*100):0;
+    var cls=pct>=80?'pct-ok':pct>=50?'pct-mid':'pct-no';
+    rows+='<tr><td>'+(t.icon||'')+'&nbsp;'+h(t.name)+'</td><td>'+t.words.length+'</td><td>'+lc+'</td><td>'+c+'</td><td>'+e+'</td><td class="'+cls+'">'+(tot>0?pct+'%':'—')+'</td></tr>';
+    totW+=t.words.length; totL+=lc; totC+=c; totE+=e;
+  }
+  var totTot=totC+totE, totPct=totTot>0?Math.round(totC/totTot*100):0;
+  rows+='<tr><td>Итого</td><td>'+totW+'</td><td>'+totL+'</td><td>'+totC+'</td><td>'+totE+'</td><td>'+(totTot>0?totPct+'%':'—')+'</td></tr>';
+  tbl.innerHTML=rows;
+}
+function rStats(){
+  rAllTopics();
+  var t=curT(); if(!t) return;
+  var el=document.getElementById('cur-tname'); if(el) el.textContent=(t.icon||'')+' '+t.name;
+  var lc=cntL(t), c=gC(t.id), e=gE(t.id), tot=c+e, pct=tot>0?Math.round(c/tot*100):0;
+  document.getElementById('sbig').innerHTML=
+    '<div class="sc"><span class="sv" style="color:var(--amb2)">'+lc+'</span><span class="slb">\u0412\u044b\u0443\u0447\u0435\u043d\u043e</span></div>'+
+    '<div class="sc"><span class="sv" style="color:var(--ok)">'+c+'</span><span class="slb">\u0412\u0435\u0440\u043d\u043e</span></div>'+
+    '<div class="sc"><span class="sv" style="color:var(--err)">'+e+'</span><span class="slb">\u041e\u0448\u0438\u0431\u043e\u043a</span></div>'+
+    '<div class="sc"><span class="sv">'+pct+'%</span><span class="slb">\u0422\u043e\u0447\u043d\u043e\u0441\u0442\u044c</span></div>'+
+    '<div class="sc"><span class="sv">'+t.words.length+'</span><span class="slb">\u0412\u0441\u0435\u0433\u043e</span></div>'+
+    '<div class="sc"><span class="sv">'+packs(t.words).length+'</span><span class="slb">\u041f\u0430\u043a\u0435\u0442\u043e\u0432</span></div>';
+  var ppl=document.getElementById('ppl'); ppl.innerHTML='';
+  var ps=packs(t.words);
+  for(var i=0;i<ps.length;i++){
+    var lc2=0; for(var j=0;j<ps[i].length;j++) if(gL(t.id,i*PS+j)) lc2++;
+    var p=Math.round(lc2/ps[i].length*100);
+    ppl.innerHTML+='<div class="ppi"><div class="ppih"><span class="ppn">\u041f\u0430\u043a\u0435\u0442 '+(i+1)+'</span><span class="ppp">'+lc2+'/'+ps[i].length+' \u00b7 '+p+'%</span></div><div class="ppb"><div class="ppf" style="width:'+p+'%"></div></div></div>';
+  }
+  var hwl=document.getElementById('hwl'), em=gEM(t.id);
+  var emArr=[];
+  for(var k in em) emArr.push([k,em[k]]);
+  emArr.sort(function(a,b){ return b[1]-a[1]; });
+  emArr=emArr.slice(0,12);
+  if(!emArr.length){
+    hwl.innerHTML='<p style="color:var(--t3);font-size:.8rem">\u0415\u0449\u0451 \u043d\u0435\u0442 \u0434\u0430\u043d\u043d\u044b\u0445. \u041d\u0430\u0447\u043d\u0438 \u0443\u043f\u0440\u0430\u0436\u043d\u0435\u043d\u0438\u044f!</p>';
+  } else {
+    hwl.innerHTML='';
+    for(var i=0;i<emArr.length;i++){
+      var w=t.words[+emArr[i][0]]; if(!w) continue;
+      hwl.innerHTML+='<div class="hwi"><div class="hwb">'+emArr[i][1]+'\u2717</div><div><div class="hwde">'+h(w.de)+'</div><div class="hwru">'+h(w.ru)+'</div></div></div>';
+    }
+  }
+}
+function rstats(){
+  var t=curT(); if(!t) return;
+  delete S[t.id+'|c']; delete S[t.id+'|e']; delete S[t.id+'|m'];
+  sv(); rStats(); rHdr();
+}
+
+// ── HELPERS ───────────────────────────────────────────
+function blank(sentence, key){
+  if(!key) return {s:sentence+' (___)', a:''};
+  try {
+    var esc = key.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+    var re = new RegExp(esc, 'i');
+    if(re.test(sentence)){
+      var m=sentence.match(re)[0];
+      return {s:sentence.replace(re,'___'), a:m};
+    }
+  } catch(e){}
+  return {s:sentence+' (___)', a:key};
+}
+function nm(s){
+  return s.toLowerCase()
+    .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss')
+    .replace(/[^a-z0-9 ]/g,'').replace(/ +/g,' ').trim();
+}
+function shuf(a){ var r=a.slice(); for(var i=r.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=r[i]; r[i]=r[j]; r[j]=t; } return r; }
+function h(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── MIGRATION: localStorage → IndexedDB ───────────────
+function migrateFromLocalStorage(){
+  // Reset flag if previous migration was broken (ran before fix)
+  // Check by seeing if wv9 still has I or N keys
+  var raw;
+  try { raw = JSON.parse(localStorage.getItem('wv9')||'{}'); } catch(e){ raw={}; }
+  var hasOldData = Object.keys(raw).some(function(k){ var p=k.split('|'); return p.length===3&&(p[1]==='I'||p[1]==='N'); });
+  if(hasOldData) localStorage.removeItem('wMigrated_v1');
+
+  var migrated = localStorage.getItem('wMigrated_v1');
+  if(migrated) return Promise.resolve();
+
+  // All notes and images are inside wv9 JSON object under keys like "topicId|N|idx" and "topicId|I|idx"
+  var raw;
+  try { raw = JSON.parse(localStorage.getItem('wv9')||'{}'); } catch(e){ raw={}; }
+
+  var imgMigrations=[], noteMigrations=[], keysToDelete=[];
+
+  Object.keys(raw).forEach(function(key){
+    var parts = key.split('|');
+    if(parts.length!==3) return;
+    var type=parts[1], dbKey=parts[0]+'|'+parts[2], val=raw[key];
+    if(!val) return;
+    if(type==='I'){ imgMigrations.push({key:dbKey,val:val}); keysToDelete.push(key); }
+    if(type==='N'){ noteMigrations.push({key:dbKey,val:val}); keysToDelete.push(key); }
+  });
+
+  if(!imgMigrations.length && !noteMigrations.length){
+    localStorage.setItem('wMigrated_v1','1');
+    return Promise.resolve();
+  }
+
+  return openDB().then(function(db){
+    var promises=[];
+    imgMigrations.forEach(function(m){
+      promises.push(new Promise(function(resolve){
+        var tx=db.transaction('imgs','readwrite');
+        tx.objectStore('imgs').put(m.val,m.key);
+        tx.oncomplete=resolve; tx.onerror=resolve;
+      }));
+    });
+    noteMigrations.forEach(function(m){
+      promises.push(new Promise(function(resolve){
+        var tx=db.transaction('notes','readwrite');
+        tx.objectStore('notes').put(m.val,m.key);
+        tx.oncomplete=resolve; tx.onerror=resolve;
+      }));
+    });
+    return Promise.all(promises);
+  }).then(function(){
+    // Remove migrated keys from S and save
+    keysToDelete.forEach(function(k){ delete S[k]; });
+    sv();
+    localStorage.setItem('wMigrated_v1','1');
+    console.log('Migration done: '+imgMigrations.length+' images, '+noteMigrations.length+' notes moved to IndexedDB');
+  });
+}
+
+// ── INIT ──────────────────────────────────────────────
+initTopics();
+applyBuiltinEdits();
+migrateFromLocalStorage().then(function(){
+  renderSb();
+  rBrowse();
+  rHdr();
+});
+
+// Emoji grid
+var er=document.getElementById('erow');
+for(var ei=0;ei<EMOJIS.length;ei++){
+  (function(em,i){
+    var b=document.createElement('div'); b.className='eb'+(em===selEmoji?' sel':''); b.textContent=em;
+    b.onclick=function(){
+      selEmoji=em;
+      var ebs=er.querySelectorAll('.eb'); for(var j=0;j<ebs.length;j++) ebs[j].classList.remove('sel');
+      b.classList.add('sel');
+    };
+    er.appendChild(b);
+  })(EMOJIS[ei], ei);
+}
+
+// Drag-drop: image modal
+(function(){
+  var dz=document.getElementById('imgDZ');
+  dz.addEventListener('dragover', function(e){ e.preventDefault(); dz.classList.add('drag'); });
+  dz.addEventListener('dragleave', function(){ dz.classList.remove('drag'); });
+  dz.addEventListener('drop', function(e){
+    e.preventDefault(); dz.classList.remove('drag');
+    var f=e.dataTransfer.files[0];
+    if(f && f.type.indexOf('image/')===0){
+      var dt=new DataTransfer(); dt.items.add(f);
+      document.getElementById('imgFI').files=dt.files;
+      onImgFile({target:{files:dt.files}});
+    }
+  });
+})();
+
+// Drag-drop: topic file
+(function(){
+  var dz=document.getElementById('atDZ');
+  dz.addEventListener('dragover', function(e){ e.preventDefault(); dz.classList.add('drag'); });
+  dz.addEventListener('dragleave', function(){ dz.classList.remove('drag'); });
+  dz.addEventListener('drop', function(e){
+    e.preventDefault(); dz.classList.remove('drag');
+    var f=e.dataTransfer.files[0];
+    if(f){
+      var dt=new DataTransfer(); dt.items.add(f);
+      document.getElementById('atFI').files=dt.files;
+      onTopicFile({target:{files:dt.files}});
+    }
+  });
+})();
+
+var _eTid=null,_eIdx=null,_eFromEx=false;
+function addWord(){
+  _eTid=curId; _eIdx=-1; _eFromEx=false;
+  document.getElementById('ed-de').value='';
+  document.getElementById('ed-fm').value='';
+  document.getElementById('ed-ru').value='';
+  document.getElementById('ed-de2').value='';
+  document.getElementById('ed-ru2').value='';
+  document.getElementById('editM-ttl').textContent='Новое слово';
+  document.getElementById('editM').classList.add('open');
+}
+function editWord(tId,idx){
+  var topic=topics.filter(function(t){return t.id===tId;})[0];if(!topic)return;
+  var w=topic.words[idx];if(!w)return;
+  _eTid=tId;_eIdx=idx;_eFromEx=false;
+  document.getElementById('ed-de').value=w.de||'';
+  document.getElementById('ed-fm').value=w.fm||'';
+  document.getElementById('ed-ru').value=w.ru||'';
+  document.getElementById('ed-de2').value=w.de2||'';
+  document.getElementById('ed-ru2').value=w.ru2||'';
+  document.getElementById('editM-ttl').textContent='Редактировать слово';
+  document.getElementById('editM').classList.add('open');
+}
+function editKey(){
+  var w=Q[qi]; if(!w) return;
+  var topic=topics.filter(function(t){return t.id===exTid;})[0]; if(!topic) return;
+  var idx=w.idx;
+  _eTid=exTid; _eIdx=idx; _eFromEx=true;
+  document.getElementById('ed-de').value=w.de||'';
+  document.getElementById('ed-fm').value=w.fm||'';
+  document.getElementById('ed-ru').value=w.ru||'';
+  document.getElementById('ed-de2').value=w.de2||'';
+  document.getElementById('ed-ru2').value=w.ru2||'';
+  document.getElementById('editM-ttl').textContent='Редактировать слово';
+  document.getElementById('editM').classList.add('open');
+}
+function closeEdit(){document.getElementById('editM').classList.remove('open');_eTid=null;_eIdx=null;_eFromEx=false;}
+function saveEdit(){
+  if(_eTid===null) return;
+  var topic=topics.filter(function(t){return t.id===_eTid;})[0];if(!topic)return;
+  var de=document.getElementById('ed-de').value.trim(),
+      fm=document.getElementById('ed-fm').value.trim(),
+      ru=document.getElementById('ed-ru').value.trim(),
+      de2=document.getElementById('ed-de2').value.trim(),
+      ru2=document.getElementById('ed-ru2').value.trim();
+  if(!de||!ru){alert('Слово и перевод обязательны');return;}
+  var kParts=de.split(' '),kStop=/^(der|die|das|sich|etw[.]?|jmdn?[.]?|ein|eine|den|dem|des|auf|in|aus|von|zu)$/i;
+  var k=kParts.filter(function(x){return !kStop.test(x)&&x.charAt(0)!=='(';})[0]||kParts[kParts.length-1]||de;
+  var word={de:de,fm:fm,ru:ru,k:k,de2:de2,ru2:ru2};
+  if(_eIdx===-1){
+    // New word — push and navigate to last pack so user sees it
+    topic.words.push(word);
+    if(_eTid!=='konsum'&&_eTid!=='tourismus') saveCust();
+    var lastPack=packs(topic.words).length-1;
+    if(curId===_eTid) curPack=lastPack;
+    closeEdit(); renderSb(); rHdr(); rBrowse(); showToast('\u2713 Слово добавлено');
+  } else {
+    topic.words[_eIdx]=word;
+    if(_eTid!=='konsum'&&_eTid!=='tourismus') saveCust();
+    else localStorage.setItem('wEdit_'+_eTid+'_'+_eIdx,JSON.stringify(word));
+    var fromEx=_eFromEx;
+    closeEdit(); renderSb(); rHdr();
+    if(fromEx){ Q[qi]=Object.assign({},word,{idx:Q[qi].idx}); rQ(); }
+    else rW();
+    showToast('\u2713 Слово сохранено');
+  }
+}
+
+// ── ADD WORDS TO EXISTING TOPIC ───────────────────────
+var _awTid=null;
+function openAddWords(tId, e){
+  e.stopPropagation();
+  _awTid=tId; _awPendingWords=null;
+  var t=topics.filter(function(x){return x.id===tId;})[0];
+  document.getElementById('aw-tname').textContent=t?t.name:'';
+  var fs=document.getElementById('awst'); fs.className='fst'; fs.textContent='';
+  document.getElementById('awM').classList.add('open');
+}
+function closeAddWords(){ document.getElementById('awM').classList.remove('open'); _awTid=null; _awPendingWords=null; }
+function onAddWordsFile(e){
+  var file=e.target.files[0]; if(!file) return;
+  var fs=document.getElementById('awst');
+  var ext=file.name.split('.').pop().toLowerCase();
+  if(ext==='pdf'){
+    fs.className='fst ok'; fs.textContent='⏳ Читаем PDF…';
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      parsePDF(ev.target.result).then(function(words){
+        if(!words.length){ fs.className='fst err'; fs.textContent='⚠️ Слова не найдены.'; }
+        else { _awPendingWords=words; fs.className='fst ok'; fs.textContent='✓ Найдено '+words.length+' слов'; }
+      }).catch(function(err){ fs.className='fst err'; fs.textContent='⚠️ '+err.message; });
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    var r=new FileReader();
+    r.onload=function(ev){
+      var words=parseTXT(ev.target.result);
+      if(!words.length){ fs.className='fst err'; fs.textContent='⚠️ Слова не найдены.'; }
+      else { _awPendingWords=words; fs.className='fst ok'; fs.textContent='✓ Найдено '+words.length+' слов'; }
+    };
+    r.readAsText(file,'UTF-8');
+  }
+  e.target.value='';
+}
+function confirmAddWords(){
+  if(!_awTid||!_awPendingWords||!_awPendingWords.length){ alert('Сначала загрузи файл'); return; }
+  var topic=topics.filter(function(t){return t.id===_awTid;})[0]; if(!topic) return;
+  topic.words=topic.words.concat(_awPendingWords);
+  if(_awTid!=='konsum'&&_awTid!=='tourismus') saveCust();
+  var n=_awPendingWords.length; _awPendingWords=null;
+  closeAddWords(); renderSb(); rHdr(); rBrowse();
+  showToast('\u2713 Добавлено '+n+' слов');
+}
+function deleteWord(tId,idx){var topic=topics.filter(function(t){return t.id===tId;})[0];if(!topic)return;var w=topic.words[idx];if(!w)return;if(!confirm('Удалить \xAB'+w.de+'\xBB?'))return;topic.words.splice(idx,1);var newS={},keys=Object.keys(S);for(var i=0;i<keys.length;i++){var key=keys[i];if(key.indexOf(tId+'|')===0){var parts=key.split('|');if(parts.length===3){var widx=parseInt(parts[2]);if(widx===idx)continue;newS[tId+'|'+parts[1]+'|'+(widx>idx?widx-1:widx)]=S[key];}else newS[key]=S[key];}else newS[key]=S[key];}S=newS;sv();if(tId!=='konsum'&&tId!=='tourismus')saveCust();else{var dels=JSON.parse(localStorage.getItem('wDel_'+tId)||'[]');dels.push(idx);localStorage.setItem('wDel_'+tId,JSON.stringify(dels));}var ps=packs(topic.words);if(curPack>=ps.length&&curPack>0)curPack=ps.length-1;renderSb();rHdr();rBrowse();showToast('\uD83D\uDDD1 Слово удалено');}
+function applyBuiltinEdits(){['konsum','tourismus'].forEach(function(tId){var topic=topics.filter(function(t){return t.id===tId;})[0];if(!topic)return;var dels=JSON.parse(localStorage.getItem('wDel_'+tId)||'[]');dels.sort(function(a,b){return b-a;});dels.forEach(function(di){if(di<topic.words.length)topic.words.splice(di,1);});for(var wi=0;wi<topic.words.length;wi++){var saved=localStorage.getItem('wEdit_'+tId+'_'+wi);if(saved){try{topic.words[wi]=JSON.parse(saved);}catch(e){}}}});}
+function exportData(){
+  showToast('⏳ Готовим экспорт…');
+  // Dump all IndexedDB stores
+  openDB().then(function(db){
+    function dumpStore(store){
+      return new Promise(function(resolve){
+        var tx=db.transaction(store,'readonly');
+        var req=tx.objectStore(store).openCursor();
+        var out={};
+        req.onsuccess=function(e){
+          var cursor=e.target.result;
+          if(cursor){ out[cursor.key]=cursor.value; cursor.continue(); }
+          else resolve(out);
+        };
+        req.onerror=function(){ resolve({}); };
+      });
+    }
+    return Promise.all([dumpStore('imgs'), dumpStore('notes')]);
+  }).then(function(stores){
+    var payload={
+      version:2,
+      exportDate:new Date().toISOString(),
+      state:S,
+      customTopics:topics.filter(function(t){return t.id!=='konsum'&&t.id!=='tourismus';}),
+      imgs:stores[0],
+      notes:stores[1]
+    };
+    var blob=new Blob([JSON.stringify(payload)],{type:'application/json'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url;
+    var d=new Date();
+    a.download='wortschatz-'+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('\u2713 Экспортировано');
+  }).catch(function(err){ showToast('\u26A0 Ошибка экспорта: '+err.message, true); });
+}
+
+function importData(e){
+  var file=e.target.files[0]; if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      var payload=JSON.parse(ev.target.result);
+      if(!payload.version||!payload.state){ showToast('\u26A0 Неверный формат',true); return; }
+      S=Object.assign({},payload.state); sv();
+      if(payload.customTopics&&payload.customTopics.length){
+        var custom=topics.filter(function(t){return t.id!=='konsum'&&t.id!=='tourismus';});
+        payload.customTopics.forEach(function(inc){
+          var fi=-1;
+          for(var i=0;i<custom.length;i++) if(custom[i].id===inc.id){fi=i;break;}
+          if(fi>=0) custom[fi]=inc; else custom.push(inc);
+        });
+        localStorage.setItem('wTopics4',JSON.stringify(custom));
+        initTopics();
+      }
+      // Restore IndexedDB data (version 2+)
+      var imgs=payload.imgs||{}, notes=payload.notes||{};
+      var imgKeys=Object.keys(imgs), noteKeys=Object.keys(notes);
+      if(!imgKeys.length&&!noteKeys.length){
+        renderSb(); rHdr(); rBrowse(); showToast('\u2713 Импортировано');
+        return;
+      }
+      openDB().then(function(db){
+        var promises=[];
+        imgKeys.forEach(function(k){
+          promises.push(new Promise(function(resolve){
+            var tx=db.transaction('imgs','readwrite');
+            tx.objectStore('imgs').put(imgs[k],k);
+            tx.oncomplete=resolve; tx.onerror=resolve;
+          }));
+        });
+        noteKeys.forEach(function(k){
+          promises.push(new Promise(function(resolve){
+            var tx=db.transaction('notes','readwrite');
+            tx.objectStore('notes').put(notes[k],k);
+            tx.oncomplete=resolve; tx.onerror=resolve;
+          }));
+        });
+        return Promise.all(promises);
+      }).then(function(){
+        renderSb(); rHdr(); rBrowse();
+        showToast('\u2713 Импортировано ('+imgKeys.length+' фото, '+noteKeys.length+' заметок)');
+      }).catch(function(err){ showToast('\u26A0 Ошибка: '+err.message,true); });
+    } catch(err){ showToast('\u26A0 Ошибка: '+err.message,true); }
+  };
+  reader.readAsText(file,'UTF-8');
+  e.target.value='';
+}
+function openSettings(){
+  document.getElementById('sPS').value=PS;
+  document.getElementById('settingsM').classList.add('open');
+}
+function closeSettings(){ document.getElementById('settingsM').classList.remove('open'); }
+function saveSettings(){
+  var v=Math.min(50,Math.max(5,+document.getElementById('sPS').value||12));
+  PS=v; localStorage.setItem('wPS',v);
+  curPack=0; exPack=0;
+  closeSettings(); renderSb(); rHdr(); rBrowse();
+  showToast('\u2713 Размер пакета: '+v+' слов');
+}
+function showToast(msg,isErr){var old=document.getElementById('toast');if(old)old.remove();var t=document.createElement('div');t.id='toast';t.innerHTML=msg;t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:'+(isErr?'var(--err)':'var(--grn)')+';color:#fff;padding:10px 20px;border-radius:100px;font-size:.82rem;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:9999;white-space:nowrap;animation:fadeInUp .2s ease';document.body.appendChild(t);setTimeout(function(){if(t.parentNode)t.remove();},3000);}
+
+// awDZ drag-drop — runs after DOM (element is defined below in HTML)
+function initAwDZ(){
+  var dz=document.getElementById('awDZ');
+  if(!dz) return;
+  dz.addEventListener('dragover',function(e){e.preventDefault();dz.classList.add('drag');});
+  dz.addEventListener('dragleave',function(){dz.classList.remove('drag');});
+  dz.addEventListener('drop',function(e){
+    e.preventDefault();dz.classList.remove('drag');
+    var f=e.dataTransfer.files[0];
+    if(f){var dt=new DataTransfer();dt.items.add(f);document.getElementById('awFI').files=dt.files;onAddWordsFile({target:{files:dt.files}});}
+  });
+}
+
+</script>
+<div class="ovl" id="editM" onclick="if(event.target===this)closeEdit()">
+  <div class="edit-box">
+    <div class="mhdr"><div class="mttl" id="editM-ttl">Редактировать слово</div><button class="mxbtn" onclick="closeEdit()">&#x2715;</button></div>
+    <div class="edit-body">
+      <div class="edit-row"><label class="edit-lbl">Немецкое слово / выражение</label><input class="edit-inp" id="ed-de"></div>
+      <div class="edit-row"><label class="edit-lbl">Формы глагола</label><input class="edit-inp" id="ed-fm"></div>
+      <div class="edit-row"><label class="edit-lbl">Перевод (RU)</label><input class="edit-inp" id="ed-ru"></div>
+      <div class="edit-row"><label class="edit-lbl">Пример (DE)</label><input class="edit-inp" id="ed-de2"></div>
+      <div class="edit-row"><label class="edit-lbl">Пример (RU)</label><input class="edit-inp" id="ed-ru2"></div>
+    </div>
+    <div class="mft"><button class="bs" onclick="closeEdit()">Отмена</button><button class="bp" onclick="saveEdit()">Сохранить</button></div>
+  </div>
+</div>
+<div class="ovl" id="awM" onclick="if(event.target===this)closeAddWords()">
+  <div class="atbox">
+    <div class="attl">Добавить слова в тему <span id="aw-tname" style="color:var(--grn)"></span></div>
+    <div class="atbd">
+      <label class="atlb">Загрузить PDF или TXT</label>
+      <div class="fdz" id="awDZ" onclick="document.getElementById('awFI').click()">
+        <div class="fdi">&#x1F4C4;</div>
+        <div class="fdt">Нажми или перетащи файл</div>
+        <div class="fds">PDF из Google Sheets или TXT</div>
+      </div>
+      <input type="file" id="awFI" accept=".pdf,.txt,.csv" class="hu" onchange="onAddWordsFile(event)">
+      <div class="fst" id="awst"></div>
+      <div class="phinт">Слова будут <strong>добавлены</strong> к существующим, дубликаты не удаляются.</div>
+    </div>
+    <div class="atft">
+      <button class="bs" onclick="closeAddWords()">Отмена</button>
+      <button class="bp" onclick="confirmAddWords()">Добавить</button>
+    </div>
+  </div>
+</div>
+<div class="ovl" id="settingsM" onclick="if(event.target===this)closeSettings()">
+  <div class="mbox">
+    <div class="mhdr"><div class="mttl">Настройки</div><button class="mxbtn" onclick="closeSettings()">&#x2715;</button></div>
+    <div class="mbdy">
+      <div class="edit-row">
+        <label class="edit-lbl">Слов в одном пакете (5–50)</label>
+        <input class="edit-inp" id="sPS" type="number" min="5" max="50" style="width:100px">
+        <div style="font-size:.68rem;color:var(--t3);margin-top:5px">Изменение пересчитает все пакеты. Прогресс «Выучено» сохранится, статистика упражнений привязана к старым индексам.</div>
+      </div>
+    </div>
+    <div class="mft"><button class="bs" onclick="closeSettings()">Отмена</button><button class="bp" onclick="saveSettings()">Сохранить</button></div>
+  </div>
+</div>
+</body>
+<script>initAwDZ();</script>
+</html>
