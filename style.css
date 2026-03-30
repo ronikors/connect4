@@ -1,0 +1,63 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #222;
+  font-family: sans-serif;
+}
+
+.game {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* кнопки */
+.controls {
+  display: grid;
+  grid-template-columns: repeat(7, 80px);
+  gap: 10px;
+}
+
+.controls button {
+  font-size: 28px;
+  cursor: pointer;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 0;
+}
+
+.controls button:hover {
+  background: #555;
+}
+
+/* поле */
+.board {
+  display: grid;
+  grid-template-columns: repeat(7, 80px);
+  grid-template-rows: repeat(6, 80px);
+  gap: 10px;
+  padding: 15px;
+  background: #0a3d91;
+  border-radius: 15px;
+}
+
+.cell {
+  width: 80px;
+  height: 80px;
+  background: #111;
+  border-radius: 50%;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.7);
+}
+
+/* фишки игроков */
+.cell.red {
+  background: radial-gradient(circle at 30% 30%, #ff6b6b, #c0392b);
+}
+
+.cell.yellow {
+  background: radial-gradient(circle at 30% 30%, #fff200, #f1c40f);
+}

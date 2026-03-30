@@ -1,0 +1,64 @@
+<button>👇</button>
+<button>👇</button>
+<button>👇</button>
+<button>👇</button>
+<button>👇</button>
+<button>👇</button>
+<button>👇</button>
+
+
+
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+
+
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+
+
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell red"></div>     &lt;!&ndash; красная фишка &ndash;&gt;-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+
+
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell yellow"></div>  &lt;!&ndash; жёлтая фишка &ndash;&gt;-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+
+
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+
+
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+
+
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
+<!--    <div class="cell"></div>-->
